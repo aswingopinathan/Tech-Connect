@@ -1,0 +1,35 @@
+import React from "react";
+import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
+import HomePage from "../Pages/Client/HomePage";
+import SignInPage from "../Pages/Client/SignInPage";
+import SignUpPage from "../Pages/Client/SignUpPage";
+import AboutPage from "../Pages/Client/AboutPage";
+import UserPage from "../Pages/Client/UserPage";
+import AuthRoutes from "../ProtectedRoutes/AuthRoutes";
+import UnauthRoutes from "../ProtectedRoutes/UnauthRoutes";
+import OtpPage from "../Pages/Client/OtpPage";
+
+function UserRoutes() {
+  return (
+    <>
+      <Router>
+        <Routes>
+          <Route element={<UnauthRoutes />}>
+            <Route exact path="/" element={<HomePage />} />
+            <Route path="/signin" element={<SignInPage />} />
+            <Route path="/otp" element={<OtpPage/>} />
+
+            <Route path="/signup" element={<SignUpPage />} />
+            <Route path="/about" element={<AboutPage />} />
+          </Route>
+
+          <Route element={<AuthRoutes />}>
+            <Route path="/user" element={<UserPage />} />
+          </Route>
+        </Routes>
+      </Router>
+    </>
+  );
+}
+
+export default UserRoutes;
