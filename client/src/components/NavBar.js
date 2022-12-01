@@ -36,6 +36,8 @@ function NavBar({mode,setMode}) {
 
     const [open, setOpen] = useState(false)
 const navigate = useNavigate();
+let imageUrl=JSON.parse(localStorage.getItem('userInfo'))?.pic
+let userName=JSON.parse(localStorage.getItem('userInfo'))?.name
 
   return (
     <AppBar position="sticky">
@@ -54,13 +56,17 @@ const navigate = useNavigate();
           <Badge badgeContent={4} color="error">
             <Mail />
           </Badge>
+
           <Badge badgeContent={4} color="error">
             <Notifications />
           </Badge>
+
           <Avatar 
-          sx={{width:30,height:30}}
-          alt="Remy Sharp" src="" 
+          sx={{width:30,height:30,cursor:"pointer"}}
+          alt="Remy Sharp" src={imageUrl} 
           onClick={(e)=>setOpen(true)}/>
+        <span>{userName}</span>
+
         </Icons>
       </StyledToolbar>
       <Menu
@@ -78,8 +84,9 @@ const navigate = useNavigate();
           horizontal: 'right',
         }}
       >
-        <MenuItem >Profile</MenuItem>
-        <MenuItem >My account</MenuItem>
+        <MenuItem onClick={()=>{
+        navigate('/profile')}}>Profile</MenuItem>
+        {/* <MenuItem >My account</MenuItem> */}
         <MenuItem onClick={()=>{
         localStorage.removeItem("userInfo");
         navigate('/')}}>

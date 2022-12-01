@@ -11,7 +11,7 @@ import List from '@mui/material/List';
 
 function RightBar() {
   return (
-    <Box flex={2} p={2} sx={{ display: { xs: "none", sm: "block" } }}>
+    <Box flex={2} p={2} sx={{ display: { xs: "none", sm: "none",md: "block" } }}>
       <Box position="fixed" width={300}>
         <Typography variant="h6" fontWeight={100}>
           Online Friends

@@ -3,6 +3,7 @@ import React from "react";
 import logo from "../images/homeImage.png";
 import "./Content.css";
 import { useNavigate } from "react-router-dom";
+import { Box } from "@mui/material";
 
 function Content() {
   const navigate = useNavigate();
@@ -31,9 +32,14 @@ function Content() {
           About
         </Button>
       </div>
+      
       <div>
+        <Box sx={{ display: { xs: "none", sm: "none",md: "block" } }}>
         <img style={homeImage} src={logo} alt=""></img>
+        </Box>
+{/* <lottie-player src="https://assets5.lottiefiles.com/packages/lf20_osdxlbqq.json"  background="transparent"  speed="1"  style="width: 300px; height: 300px;"  loop controls autoplay></lottie-player> */}
       </div>
+
     </div>
   );
 }

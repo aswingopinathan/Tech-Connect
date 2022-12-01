@@ -58,6 +58,8 @@ export default function SignUp() {
   const [picMessage, setPicMessage] = useState(null);
   const [error, setError] = useState(false);
   const [loading, setLoading] = useState(false);
+  const [imgUpload, setImgUpload] = useState(false);
+
   const navigate = useNavigate();
 
   const handleName = () => {
@@ -128,21 +130,25 @@ export default function SignUp() {
             { name: name, email: email, password: password,mobile: mobile, pic: pic },
             config
           );
-
+              console.log('hello');
           console.log(data);
 
+          if(data.error){
+          setError("User Already Exists");
           setLoading(false);
-          localStorage.setItem("userInfo", JSON.stringify(data));
+
+          }else{
+            localStorage.setItem("initialInfo", JSON.stringify(data));
           setLoading(false);
           setError("");
-          
           navigate("/otp");
+          }
         } catch (error) {
           setError(error.response.data.message);
           setLoading(false);
         }
       }
-      console.log(email);
+      // console.log(email);
     } else if (
       !handleEmail() &&
       !handleMobile() &&
@@ -152,7 +158,7 @@ export default function SignUp() {
     }
   };
 
-  const uploadStyle = { margin: 20 };
+  // const uploadStyle = { margin: 20 };
 
   const postDetails = (pics) => {
     if (!pics) {
@@ -164,14 +170,15 @@ export default function SignUp() {
       const data = new FormData();
       data.append("file", pics);
       data.append("upload_preset", "techconnect");
-      data.append("cloud_name", "dtsqr3v76");
-      fetch("https://api.cloudinary.com/v1_1/dtsqr3v76/image/upload", {
+      data.append("cloud_name", process.env.CLOUD_NAME);
+      fetch(`https://api.cloudinary.com/v1_1/dtsqr3v76/image/upload`, {
         method: "post",
         body: data,
       })
         .then((res) => res.json())
         .then((data) => {
           console.log(data);
+          setImgUpload(true)
           setPic(data.url.toString());
         })
         .catch((err) => {
@@ -180,6 +187,7 @@ export default function SignUp() {
     } else {
       return setPicMessage("Please select an image");
     }
+
   };
 
   return (
@@ -311,7 +319,7 @@ export default function SignUp() {
               {picMessage && (
                 <ErrorMessage varient="danger">{picMessage}</ErrorMessage>
               )}
-              <Button style={uploadStyle} variant="contained" component="label">
+              <Button sx={{margin:'20px'}} variant="contained" component="label">
                 Upload Pic
                 <input
                   type="file"
@@ -319,12 +327,8 @@ export default function SignUp() {
                   hidden
                 />
               </Button>
-              {/* <Grid item xs={12}>
-                <FormControlLabel
-                  control={<Checkbox value="allowExtraEmails" color="primary" />}
-                  label="I want to receive inspiration, marketing promotions and updates via email."
-                />
-              </Grid> */}
+              {imgUpload?<span>Image Uploaded</span>:""}
+             
             </Grid>
             <Button
               type="submit"

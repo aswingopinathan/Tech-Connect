@@ -8,6 +8,7 @@ import UserPage from "../Pages/Client/UserPage";
 import AuthRoutes from "../ProtectedRoutes/AuthRoutes";
 import UnauthRoutes from "../ProtectedRoutes/UnauthRoutes";
 import OtpPage from "../Pages/Client/OtpPage";
+import ProfilePage from "../Pages/Client/ProfilePage";
 
 function UserRoutes() {
   return (
@@ -25,6 +26,8 @@ function UserRoutes() {
 
           <Route element={<AuthRoutes />}>
             <Route path="/user" element={<UserPage />} />
+            <Route path="/profile" element={<ProfilePage />} />
+
           </Route>
         </Routes>
       </Router>
