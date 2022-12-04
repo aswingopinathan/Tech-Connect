@@ -161,7 +161,7 @@ function Add() {
     <>
       <Tooltip
         onClick={(e) => setOpen(true)}
-        title="Delete"
+        title="Add Post"
         sx={{
           position: "fixed",
           bottom: 20,

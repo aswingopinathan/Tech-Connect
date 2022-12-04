@@ -182,7 +182,7 @@ module.exports = {
         .populate("userId")
         .then((data) => {
           // console.log(data);
-          res.status(200).json(data);
+          res.status(200).json(data.reverse());
         });
     } catch (error) {
       console.log(error);

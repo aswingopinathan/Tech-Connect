@@ -14,9 +14,12 @@ import React from "react";
 import ConnectWithoutContactIcon from "@mui/icons-material/ConnectWithoutContact";
 import Mail from "@mui/icons-material/Mail";
 import Notifications from "@mui/icons-material/Notifications";
-import {useState} from 'react'
-import {useNavigate} from 'react-router-dom'
-
+import { useState } from "react";
+import { useNavigate } from "react-router-dom";
+import HomeIcon from "@mui/icons-material/Home";
+import PeopleIcon from "@mui/icons-material/People";
+import WorkIcon from "@mui/icons-material/Work";
+import SearchIcon from '@mui/icons-material/Search';
 
 const StyledToolbar = styled(Toolbar)({
   display: "flex",
@@ -30,14 +33,17 @@ const Search = styled("div")(({ theme }) => ({
   width: "40%",
 }));
 
-const Icons = styled(Box)(({ theme }) => ({ display:"flex", alignItems:"center",gap:"20px"}));
+const Icons = styled(Box)(({ theme }) => ({
+  display: "flex",
+  alignItems: "center",
+  gap: "20px",
+}));
 
-function NavBar({mode,setMode}) {
-
-    const [open, setOpen] = useState(false)
-const navigate = useNavigate();
-let imageUrl=JSON.parse(localStorage.getItem('userInfo'))?.pic
-let userName=JSON.parse(localStorage.getItem('userInfo'))?.name
+function NavBar({ mode, setMode }) {
+  const [open, setOpen] = useState(false);
+  const navigate = useNavigate();
+  let imageUrl = JSON.parse(localStorage.getItem("userInfo"))?.pic;
+  let userName = JSON.parse(localStorage.getItem("userInfo"))?.name;
 
   return (
     <AppBar position="sticky">
@@ -46,13 +52,54 @@ let userName=JSON.parse(localStorage.getItem('userInfo'))?.name
           TECH CONNECT
         </Typography>
         <ConnectWithoutContactIcon
-          sx={{ display: { xs: "block", sm: "none" } }}
+          sx={{ display: { xs: "block", sm: "none" },cursor:'pointer' }}
+          onClick={()=>{navigate('/user')}}
         />
-        <Search sx={{padding:"0px"}}>
-          {mode==="dark"?<InputBase placeholder="search... " sx={{bgcolor:"black",width:"100%",paddingLeft:"10px"}}/>:
-          <InputBase placeholder="search... " sx={{paddingLeft:"10px"}} borderRadius="40px"/>}
+        <SearchIcon
+          sx={{ display: { xs: "block", sm: "none" }, cursor:'pointer' }}
+          // onClick={}
+        />
+
+        <Search sx={{ padding: "0px",display: { xs: "none", sm: "block" } }}>
+          {mode === "dark" ? (
+            <InputBase
+              placeholder="search... "
+              sx={{ bgcolor: "black", width: "100%", paddingLeft: "10px" }}
+            />
+          ) : (
+            <InputBase
+              placeholder="search... "
+              sx={{ paddingLeft: "10px" }}
+              borderRadius="40px"
+            />
+          )}
         </Search>
         <Icons>
+          <Badge
+            badgeContent={1}
+            color="error"
+            sx={{ cursor: "pointer" }}
+            onClick={(e) => {
+              navigate("/user");
+            }}
+          >
+            <HomeIcon />
+          </Badge>
+
+          <Badge badgeContent={2}
+          color="error"
+          sx={{ cursor: "pointer" }}
+            onClick={(e) => {
+              navigate("/user");
+            }}
+          >
+            <PeopleIcon />
+          </Badge>
+
+          <Badge>
+            <WorkIcon />
+          </Badge>
+
           <Badge badgeContent={4} color="error">
             <Mail />
           </Badge>
@@ -62,11 +109,12 @@ let userName=JSON.parse(localStorage.getItem('userInfo'))?.name
           </Badge>
           <span>{userName}</span>
 
-          <Avatar 
-          sx={{width:30,height:30,cursor:"pointer"}}
-          alt="Remy Sharp" src={imageUrl} 
-          onClick={(e)=>setOpen(true)}/>
-
+          <Avatar
+            sx={{ width: 30, height: 30, cursor: "pointer" }}
+            alt="Remy Sharp"
+            src={imageUrl}
+            onClick={(e) => setOpen(true)}
+          />
         </Icons>
       </StyledToolbar>
       <Menu
@@ -74,24 +122,32 @@ let userName=JSON.parse(localStorage.getItem('userInfo'))?.name
         aria-labelledby="demo-positioned-button"
         // anchorEl={anchorEl}
         open={open}
-        onClose={(e)=>setOpen(false)}
+        onClose={(e) => setOpen(false)}
         anchorOrigin={{
-          vertical: 'top',
-          horizontal: 'right',
+          vertical: "top",
+          horizontal: "right",
         }}
         transformOrigin={{
-          vertical: 'top',
-          horizontal: 'right',
+          vertical: "top",
+          horizontal: "right",
         }}
       >
-        <MenuItem onClick={()=>{
-        navigate('/profile')}}>Profile</MenuItem>
+        <MenuItem
+          onClick={() => {
+            navigate("/profile");
+          }}
+        >
+          Profile
+        </MenuItem>
         {/* <MenuItem >My account</MenuItem> */}
-        <MenuItem onClick={()=>{
-        localStorage.removeItem("userInfo");
-        navigate('/')}}>
+        <MenuItem
+          onClick={() => {
+            localStorage.removeItem("userInfo");
+            navigate("/");
+          }}
+        >
           Logout
-          </MenuItem>
+        </MenuItem>
       </Menu>
     </AppBar>
   );

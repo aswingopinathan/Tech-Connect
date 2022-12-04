@@ -21,14 +21,14 @@ const navigate = useNavigate();
       <Box position={"fixed"}>
       <List>
         
-          <ListItem disablePadding>
+          {/* <ListItem disablePadding>
             <ListItemButton > 
               <ListItemIcon>
                 <Home/>
               </ListItemIcon>
               <ListItemText primary="Homepage" onClick={e=>{navigate('/user')}}/>
             </ListItemButton>
-          </ListItem>
+          </ListItem> */}
 
           {/* <ListItem disablePadding>
             <ListItemButton component="a" href="#">
@@ -62,7 +62,7 @@ const navigate = useNavigate();
               <ListItemIcon>
                 <PeopleIcon/>
               </ListItemIcon>
-              <ListItemText primary="Friends" />
+              <ListItemText primary="Connections" />
             </ListItemButton>
           </ListItem>
 

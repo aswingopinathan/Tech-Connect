@@ -7,8 +7,7 @@ import {
   CardActions,
   CardContent,
   CardHeader,
-  // CardMedia,
-  // Checkbox,
+  CardMedia,
   IconButton,
   Typography,
   Menu,
@@ -21,16 +20,12 @@ import MoreVertIcon from "@mui/icons-material/MoreVert";
 import Favorite from "@mui/icons-material/Favorite";
 import FavoriteBorder from "@mui/icons-material/FavoriteBorder";
 import CommentIcon from "@mui/icons-material/Comment";
-// import { Box } from "@mui/material";
 import axios from "axios";
 import { useState } from "react";
 import Collapse from "@mui/material/Collapse";
   
-
 function Post({ post, setLiked }) {
-// console.log('kareem',post?.comments);
-// console.log('arvind',post);
-
+// console.log('postchecking',post.comments);
 
   const [anchorEl, setAnchorEl] = React.useState(null);
   const open = Boolean(anchorEl);
@@ -44,11 +39,9 @@ function Post({ post, setLiked }) {
   const [commentaction, setCommentAction] = useState(false);
   const [comment, setComment] = useState(false);
 
-
   const userData = JSON.parse(localStorage.getItem("userInfo"));
   let token = JSON.parse(localStorage.getItem("userInfo"))?.token;
   let userId = JSON.parse(localStorage.getItem("userInfo"))?._id;
-  // console.log('checking',post?.comments[0].comment)
 
   const config = {
     headers: {
@@ -57,6 +50,7 @@ function Post({ post, setLiked }) {
     },
   };
 
+  // axios requests start
   const like = async () => {
     await axios
       .post(
@@ -104,13 +98,18 @@ function Post({ post, setLiked }) {
       )
       .then(() => {
         setLiked(Math.random());
-        // setComment(null)
         setComment('')
       });
   }
+  // axios requests end
 
   return (
-    <Card sx={{ margin: 5 }}>
+    // main card post start
+    <Card sx={{ margin: 2 , borderRadius:'2em',
+  minWidth:'auto',maxWidth:'800px'}}
+    variant='outlined'
+    >
+
       <CardHeader
         avatar={<Avatar aria-label="recipe" src={post?.userId.pic}></Avatar>}
         action={
@@ -134,9 +133,8 @@ function Post({ post, setLiked }) {
         title={post?.userId.name}
         // subheader="September 14, 2022"
         subheader={post?.date}
-        minHeight="400px"
-        maxHeight="auto"
       />
+      
       <CardContent>
         <Typography variant="body2" color="text.secondary">
           {post?.description}
@@ -150,17 +148,19 @@ function Post({ post, setLiked }) {
         image={post?.image}
         alt="Paella dish"
       /> */}
-      {post.image ? (
-        <img
-          style={{ "object-fit": "contain" }}
+      {post.image ? 
+        <CardMedia
+        component="img"
+          sx={{ "object-fit": "contain" }}
           width="800px"
           height="400px"
           src={post?.image}
           alt=""
-        ></img>
-      ) : (
+        ></CardMedia>
+       : 
         ""
-      )}
+      }
+
       {post.video ? (
         <video
           controls
@@ -173,11 +173,11 @@ function Post({ post, setLiked }) {
       ) : (
         ""
       )}
+
       <CardActions disableSpacing>
         {post.likes.length ? <span>{post.likes.length}</span> : ""}
 
 {/* like checking scenario */}
-
         {post.likes.includes(userId) ? (
           <IconButton
             aria-label="add to favorites"
@@ -219,7 +219,37 @@ function Post({ post, setLiked }) {
         sx={{ minHeight: "200px", maxHeight: "500px", overflowY:'scroll' }}
       >
 
-        {/* db card */}
+          {/* comment card start */}
+        <Card sx={{ margin: 5 }}>
+      <CardHeader
+        avatar={<Avatar aria-label="recipe" src={userData.pic}></Avatar>}
+        title={userData.name}
+        // subheader="September 14, 2022"
+        // subheader={post?.date}
+        minHeight="40px"
+        maxHeight="80px"
+      />
+      <CardContent>
+      <TextField
+            sx={{ width: "100%",borderRadius: "20px", }}
+            id="standard-multiline-static"
+            multiline
+            // rows={3}
+            placeholder="Add a comment...."
+            variant="outlined"
+            onChange={(e=>{setComment(e.target.value)})}
+          />
+          {comment?<Button sx={{marginTop:'10px'}} 
+          variant="contained" 
+          endIcon={<SendIcon />}
+          onClick={()=>{addComment()}}>
+        Post
+      </Button>:""}
+      </CardContent>  
+    </Card>
+{/* comment card end */}
+
+        {/* db card start*/}
         { post.comments.map((allcomment)=>(
       <Card sx={{ margin: 5 }}>
       <CardHeader
@@ -248,50 +278,18 @@ function Post({ post, setLiked }) {
         maxHeight="80px"
       />
 
-      
       <CardContent>
       <Typography variant="body2"
        color="text.secondary">{allcomment.comment}</Typography>
       </CardContent>  
       </Card>
-
         ))}
-
-         
-{/*  */}
-
-        <Card sx={{ margin: 5 }}>
-      <CardHeader
-        avatar={<Avatar aria-label="recipe" src={userData.pic}></Avatar>}
-        title={userData.name}
-        // subheader="September 14, 2022"
-        // subheader={post?.date}
-        minHeight="40px"
-        maxHeight="80px"
-      />
-      <CardContent>
-      <TextField
-            sx={{ width: "100%",borderRadius: "20px", }}
-            id="standard-multiline-static"
-            multiline
-            // rows={3}
-            placeholder="Add a comment...."
-            variant="outlined"
-            onChange={(e=>{setComment(e.target.value)})}
-          />
-          {comment?<Button sx={{marginTop:'10px'}} 
-          variant="contained" 
-          endIcon={<SendIcon />}
-          onClick={()=>{addComment()}}>
-        Post
-      </Button>:""}
-      </CardContent>  
-    </Card>
-
-
+{/* db card end */}
 
       </Collapse>
     </Card>
+    // main card post end
+
   );
 }
 
