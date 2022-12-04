@@ -6,7 +6,7 @@ import {
   Tooltip,
   Typography,
 } from "@mui/material";
-import React from "react";
+import React, { useContext } from "react";
 import { Add as AddIcon } from "@mui/icons-material";
 import Box from "@mui/material/Box";
 import Modal from "@mui/material/Modal";
@@ -22,6 +22,7 @@ import axios from "axios";
 // import { useNavigate } from "react-router-dom";
 import Collapse from '@mui/material/Collapse';
 import Paper from '@mui/material/Paper';
+import { UserContext } from "../context/Context";
 
 const StyleModal = styled(Modal)({
   display: "flex",
@@ -36,6 +37,9 @@ const UserBox = styled(Box)({
   marginBottom: "20px",
 });
 function Add() {
+// 
+  const{setTrigger}=useContext(UserContext)
+
   const [open, setOpen] = useState(false);
   let imageUrl = JSON.parse(localStorage.getItem("userInfo"))?.pic;
   let userName = JSON.parse(localStorage.getItem("userInfo"))?.name;
@@ -118,7 +122,7 @@ function Add() {
         const config = {
           headers: {
             "Content-Type": "application/json",
-            token :`Bearer ${token}`
+            authorization :`Bearer ${token}`
           },
         };
 
@@ -138,14 +142,16 @@ function Add() {
           setError("");
           
           // navigate("/user");
+          setTrigger(Math.random())
           setPic(null)
           setOpen(false)
 
       }catch(error){
+        console.log(error);
         setError(error.response.data.message);
           setLoading(false);
       }
-    }else{
+    }else{ 
       console.log('description');
 
     }

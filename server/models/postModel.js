@@ -22,10 +22,13 @@ const postSchema = mongoose.Schema({
       },
       name: String,
       comment: String,
+      pic: String,
       timeStamp: Date,
     },
   ],
+
   date: { type: String, requires: true },
+
   timeStamp: { type: String, required: true },
 });
 

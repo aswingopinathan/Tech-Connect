@@ -131,8 +131,8 @@ module.exports = {
   }),
 
   addPost: asyncHandler(async (req, res) => {
-    console.log("add post");
-    console.log(req.headers);
+    // console.log("add post");
+    // console.log(req.headers);
     try {
       const { pic, description, video, name, userId } = req.body;
       // console.log(name);
@@ -214,6 +214,32 @@ module.exports = {
         (data) => {
           console.log("removeLike working");
           // console.log(data);
+          res.status(200).json(data);
+        }
+      );
+    } catch (error) {
+      console.log(error);
+    }
+  }),
+
+  addComment: asyncHandler(async (req, res) => {
+    console.log("addcomment working");
+    // console.log(req.headers);
+
+    try {
+      const { postId, userId, comment, name, pic } = req.body;
+      console.log('postId',postId);
+      console.log('userId',userId);
+      console.log('comment',comment);
+      console.log('name',name);
+      console.log('pic',pic);
+
+
+
+      Post.updateOne({ _id: postId }, { $push: { comments: {userId,comment,name,pic} } }).then(
+        (data) => {
+          console.log("addcomment db  working");
+          console.log('data',data);
           res.status(200).json(data);
         }
       );

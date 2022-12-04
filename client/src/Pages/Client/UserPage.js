@@ -16,6 +16,7 @@ const darkTheme=createTheme({
     mode:mode
   }
 })
+
   return (
     
       <ThemeProvider theme={darkTheme}>
@@ -28,7 +29,9 @@ const darkTheme=createTheme({
       <RightBar/>
 
       </Stack>
+
       <Add/>
+
       </Box>
       </ThemeProvider>
       

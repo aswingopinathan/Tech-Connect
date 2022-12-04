@@ -21,7 +21,7 @@ app.use("/",userRoutes);
 app.use("/admin",adminRoutes);
 
 //error middlewares
-app.use(notFound);
+app.use(notFound); 
 app.use(errorHandler);
 
 const PORT=process.env.PORT || 6000;

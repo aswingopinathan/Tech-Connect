@@ -60,12 +60,12 @@ let userName=JSON.parse(localStorage.getItem('userInfo'))?.name
           <Badge badgeContent={4} color="error">
             <Notifications />
           </Badge>
+          <span>{userName}</span>
 
           <Avatar 
           sx={{width:30,height:30,cursor:"pointer"}}
           alt="Remy Sharp" src={imageUrl} 
           onClick={(e)=>setOpen(true)}/>
-        <span>{userName}</span>
 
         </Icons>
       </StyledToolbar>
