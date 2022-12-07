@@ -1,5 +1,5 @@
 const express = require("express");
-const { registerUser, authUser, verifyOtp, resendOtp, addPost, getPost, addLike, removeLike, addComment} = require("../controllers/userControllers");
+const { registerUser, authUser, verifyOtp, resendOtp, addPost, getPost, addLike, removeLike, addComment, removePost, reportPost} = require("../controllers/userControllers");
 const { verifyToken } = require("../middlewares/tokenMiddleware")
 const router=express.Router();
 
@@ -13,6 +13,10 @@ router.get('/getpost',verifyToken,getPost)
 router.post('/like',verifyToken,addLike)
 router.post('/unlike',verifyToken,removeLike)
 router.post('/addcomment',verifyToken,addComment)
+router.post('/removepost',verifyToken,removePost)
+router.post('/reportpost',verifyToken,reportPost)
+
+
 
 
 

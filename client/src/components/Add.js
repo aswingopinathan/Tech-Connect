@@ -20,9 +20,10 @@ import Button from "@mui/material/Button";
 import ButtonGroup from "@mui/material/ButtonGroup";
 import axios from "axios";
 // import { useNavigate } from "react-router-dom";
-import Collapse from '@mui/material/Collapse';
-import Paper from '@mui/material/Paper';
+import Collapse from "@mui/material/Collapse";
+import Paper from "@mui/material/Paper";
 import { UserContext } from "../context/Context";
+import Loading from "./Loading";
 
 const StyleModal = styled(Modal)({
   display: "flex",
@@ -37,20 +38,22 @@ const UserBox = styled(Box)({
   marginBottom: "20px",
 });
 function Add() {
-// 
-  const{setTrigger}=useContext(UserContext)
+  //
+  const { setTrigger } = useContext(UserContext);
 
   const [open, setOpen] = useState(false);
   let imageUrl = JSON.parse(localStorage.getItem("userInfo"))?.pic;
   let userName = JSON.parse(localStorage.getItem("userInfo"))?.name;
 
   const [picMessage, setPicMessage] = useState();
-  const [pic, setPic] = useState();
+  const [pic,setPic] = useState();
   const [videoMessage, setVideoMessage] = useState();
-  const [video, setVideo] = useState();
+  const [video,setVideo] = useState();
   const [description, setDescription] = useState();
   const [error, setError] = useState(false);
   const [loading, setLoading] = useState(false);
+
+  // const [progress, setProgress] = useState();
 
   const imageUpload = (pics) => {
     if (!pics) {
@@ -59,7 +62,10 @@ function Add() {
     setPicMessage(null);
 
     if (pics.type === "image/jpeg" || pics.type === "image/png") {
+    setLoading(true)
+
       const data = new FormData();
+      
       data.append("file", pics);
       data.append("upload_preset", "techconnect");
       data.append("cloud_name", process.env.CLOUD_NAME);
@@ -71,6 +77,8 @@ function Add() {
         .then((data) => {
           console.log(data);
           // setImgUpload(true)
+    setLoading(false)
+
           setPic(data.url.toString());
         })
         .catch((err) => {
@@ -81,14 +89,15 @@ function Add() {
     }
   };
 
-  
   const videoUpload = (vid) => {
     if (!vid) {
-      return setVideoMessage("Please select an image");
+      return setVideoMessage("Please select a video");
     }
     setVideoMessage(null);
 
     if (vid.type === "video/mp4" || vid.type === "video/mov") {
+    setLoading(true)
+
       const data = new FormData();
       data.append("file", vid);
       data.append("upload_preset", "techconnect");
@@ -101,6 +110,8 @@ function Add() {
         .then((data) => {
           console.log(data);
           // setImgUpload(true)
+    setLoading(false)
+
           setVideo(data.url.toString());
         })
         .catch((err) => {
@@ -111,51 +122,54 @@ function Add() {
     }
   };
 
-  const handleSubmit = async()=>{
-    console.log('post working');
-    if(pic || video){
-      // console.log('pic or video detected');
-      // let token = localStorage.getItem("userInfo").token
-  let token = JSON.parse(localStorage.getItem("userInfo"))?.token;
+  const handleSubmit = async () => {
+    console.log("post working");
 
-      try{
+    if (pic || video) {
+      let token = JSON.parse(localStorage.getItem("userInfo"))?.token;
+      try {
         const config = {
           headers: {
             "Content-Type": "application/json",
-            authorization :`Bearer ${token}`
+            authorization: `Bearer ${token}`,
           },
         };
 
         setLoading(true);
-  let name = JSON.parse(localStorage.getItem("userInfo"))?.name;
-  let userId = JSON.parse(localStorage.getItem("userInfo"))?._id;
+        let name = JSON.parse(localStorage.getItem("userInfo"))?.name;
+        let userId = JSON.parse(localStorage.getItem("userInfo"))?._id;
 
-          const { data } = await axios.post(
-            "/addpost",
-            { description: description, pic: pic, video:video,name:name,userId:userId },
-            config
-          );
+        const { data } = await axios.post(
+          "/addpost",
+          {
+            description: description,
+            pic: pic,
+            video: video,
+            name: name,
+            userId: userId,
+          },
+          config
+        );
 
-          console.log(data);
+        console.log(data);
 
-          setLoading(false);
-          setError("");
-          
-          // navigate("/user");
-          setTrigger(Math.random())
-          setPic(null)
-          setOpen(false)
+        setLoading(false);
+        setError("");
 
-      }catch(error){
+        // navigate("/user");
+        setTrigger(Math.random());
+        setPic(null);
+        setVideo(null);
+        setOpen(false);
+      } catch (error) {
         console.log(error);
         setError(error.response.data.message);
-          setLoading(false);
+        setLoading(false);
       }
-    }else{ 
-      console.log('description');
-
+    } else {
+      console.log("description");
     }
-  }
+  };
 
   return (
     <>
@@ -175,7 +189,13 @@ function Add() {
 
       <StyleModal
         open={open}
-        onClose={(e) => setOpen(false)}
+        onClose={(e) => {
+          setOpen(false);
+          setPic(null);
+          setVideo(null);
+          setPicMessage(null);
+          setVideoMessage(null);
+        }}
         aria-labelledby="modal-modal-title"
         aria-describedby="modal-modal-description"
       >
@@ -208,41 +228,64 @@ function Add() {
             rows={3}
             placeholder="what's on your mind?"
             variant="standard"
-            onChange={(e=>{setDescription(e.target.value)})}
+            onChange={(e) => {
+              setDescription(e.target.value);
+            }}
           />
 
-        {pic?<div style={{ display: 'flex' }}>
-        <Collapse in={pic}>
-          <Paper
-            elevation={5}
-            style={{ margin: 5 }} >
-              
-            <img src={pic} alt="" style={{ width: 300, height: 200 }}>
-              
-            </img>
-          </Paper>
-        </Collapse>
-      </div> : ""}
+          {/* input validation message */}
+          {!pic ? <span>{picMessage}</span> : ""}
+          {!video ? <span>{videoMessage}</span> : ""}
+          {/* input validation message ending*/}
+          <div style={{display:'flex',justifyContent:'center'}}>
+            <div>
+          {loading && <Loading />}
+          {/* {loading &&  <progress id="progressBar" value="0" max="100" style="width:300px;"></progress>} */}
+            </div>
+          </div>
 
-      {video?<div style={{ display: 'flex' }}>
-        <Collapse in={video}>
-          <Paper
-            elevation={5}
-            style={{ margin: 5 }} >
-              
-            <video src={video} alt="" style={{ width: 300, height: 200 }}>
-              
-            </video>
-          </Paper>
-        </Collapse>
-      </div> : ""}
-          
+
+          {pic ? (
+            <div style={{ display: "flex" }}>
+              <Collapse in={pic}>
+                <Paper elevation={5} style={{ margin: 5 }}>
+                  <img
+                    src={pic}
+                    alt=""
+                    style={{ width: 300, height: 200 }}
+                  ></img>
+                </Paper>
+              </Collapse>
+            </div>
+          ) : (
+            ""
+          )}
+
+          {video ? (
+            <div style={{ display: "flex" }}>
+              <Collapse in={video}>
+                <Paper elevation={5} style={{ margin: 5 }}>
+                  <video
+                    src={video}
+                    alt=""
+                    style={{ width: 300, height: 200 }}
+                  ></video>
+                </Paper>
+              </Collapse>
+            </div>
+          ) : (
+            ""
+          )}
+
           <Stack direction="row" gap={1} mt={2} mb={3}>
             <Button component="label">
               <ImageIcon color="secondary" />
               <input
                 type="file"
-                onChange={(e) => imageUpload(e.target.files[0])}
+                onChange={(e) => {
+                  imageUpload(e.target.files[0]);
+                  setVideo(null);
+                }}
                 hidden
               />
             </Button>
@@ -251,9 +294,26 @@ function Add() {
               <VideoCameraBackIcon color="success" />
               <input
                 type="file"
-                onChange={(e) => videoUpload(e.target.files[0])}
+                onChange={(e) => {
+                  videoUpload(e.target.files[0]);
+                  setPic(null);
+                }}
                 hidden
               />
+            </Button>
+
+            <Button
+              component="label"
+              sx={{ color: "red" }}
+              onClick={() => {
+                setPic(null);
+                setVideo(null);
+                setOpen(false);
+                setPicMessage(null);
+                setVideoMessage(null);
+              }}
+            >
+              cancel
             </Button>
           </Stack>
           <ButtonGroup
@@ -261,10 +321,7 @@ function Add() {
             variant="contained"
             aria-label="outlined primary button group"
           >
-            <Button
-            onClick={handleSubmit}
-            >Post</Button>
-           
+            <Button onClick={handleSubmit}>Post</Button>
           </ButtonGroup>
         </Box>
       </StyleModal>

@@ -24,7 +24,23 @@ const userSchema=mongoose.Schema(
             type:String,
             required:true,
             default:"https://icon-library.com/images/anonymous-avatar-icon/anonymous-avatar-icon-25.jpg"
-        }
+        },
+        jobPosition:{
+            type:String
+        },
+        connectionIds:[{type:String}],
+        jobStatus:{
+            type:String
+        },
+        about:{
+            type:String
+        },
+        experience:[{type:String}],
+        education:[{type:String}],
+        skills:[{type:String}],
+        resume:{
+            type:String
+        },
     },
     {
         timestamps: true,

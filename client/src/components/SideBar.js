@@ -15,7 +15,7 @@ function SideBar({mode,setMode}) {
 const navigate = useNavigate();
 
   return (
-    <Box  flex={1} p={2} 
+    <Box  flex={1} 
     sx={{ display: { xs: "none",sm:"block" } }}>
 
       <Box position={"fixed"}>

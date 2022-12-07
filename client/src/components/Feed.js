@@ -28,8 +28,8 @@ const [liked,setLiked] = useState(false);
   },[liked,trigger])
   return (
     <Box flex={4} p={2}>
-      {posts?.map((post)=>(
-      <Post post={post} setLiked={setLiked}/>
+      {posts?.map((post,index)=>(
+      <Post post={post} key={index} setLiked={setLiked}/>
       ))}
     </Box>
   )

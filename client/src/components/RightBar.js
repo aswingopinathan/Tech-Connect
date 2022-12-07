@@ -27,7 +27,7 @@ function RightBar() {
           />
           <Avatar
             alt="Cindy Baker"
-            src="https://material-ui.comstatic/images/avatar/3.jpg"
+            src="https://material-ui.com/static/images/avatar/3.jpg"
           />
           <Avatar
             alt="Agnes Walker"

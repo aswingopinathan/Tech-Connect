@@ -1,4 +1,4 @@
-import * as React from "react";
+// import * as React from "react";
 import Avatar from "@mui/material/Avatar";
 import Button from "@mui/material/Button";
 import CssBaseline from "@mui/material/CssBaseline";
@@ -44,7 +44,7 @@ export default function SignIn() {
 
   const [errEmail, setErrEmail] = useState("");
   const [errPass, setErrPass] = useState("");
-  const [error, setError] = useState(false);
+  const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
 
   const handleEmail = () => {
@@ -75,14 +75,13 @@ export default function SignIn() {
 
   const handleSubmit = async (event) => {
     event.preventDefault();
-    // let token = localStorage.getItem("userInfo")
 
     if (handleEmail() && handlePass()) {
       try {
         const config = {
           headers: {
             "Content-Type": "application/json",
-            // token:`Bearer${token}`
+
           },
         };
 
@@ -97,17 +96,28 @@ export default function SignIn() {
         );
 
         console.log(data);
-        localStorage.setItem("userInfo", JSON.stringify(data));
-        setLoading(false);
-        setError("");
+        // console.log('email',data.email);
+        // console.log('error',data.error);
 
-        navigate("/user");
+        if(data.email){
+          localStorage.setItem("userInfo", JSON.stringify(data));
+          setLoading(false);
+          setError("");
+          
+          navigate("/user");
+        }
+        if(data.error){
+          setError(data.error);
+          setLoading(false);
+
+        }
+        
       } catch (error) {
-        setError(error.response.data.message);
+        console.log(error);
+        setError(error.response.data.error);
         setLoading(false);
       }
-    } else if (!handleEmail() && !handlePass()) {
-    }
+    }  
   };
 
   return (
@@ -124,6 +134,7 @@ export default function SignIn() {
         >
           {error && <ErrorMessage varient="danger">{error}</ErrorMessage>}
           {loading && <Loading />}
+          {/* {hello?<p>{hello}</p>:""} */}
 
           <Avatar sx={{ m: 1, bgcolor: "secondary.main" }}>
             <LockOutlinedIcon />
@@ -178,7 +189,7 @@ export default function SignIn() {
             <Grid container>
               <Grid item xs>
                 <Link href="#" variant="body2">
-                  Forgot password?
+                  {/* Forgot password? */}
                 </Link>
               </Grid>
               <Grid item>

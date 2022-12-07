@@ -11,10 +11,10 @@ import {
   IconButton,
   Typography,
   Menu,
-  MenuItem ,
+  MenuItem,
 } from "@mui/material";
-import SendIcon from '@mui/icons-material/Send';
-import TextField from '@mui/material/TextField';
+import SendIcon from "@mui/icons-material/Send";
+import TextField from "@mui/material/TextField";
 import ShareIcon from "@mui/icons-material/Share";
 import MoreVertIcon from "@mui/icons-material/MoreVert";
 import Favorite from "@mui/icons-material/Favorite";
@@ -23,9 +23,13 @@ import CommentIcon from "@mui/icons-material/Comment";
 import axios from "axios";
 import { useState } from "react";
 import Collapse from "@mui/material/Collapse";
-  
+
 function Post({ post, setLiked }) {
-// console.log('postchecking',post.comments);
+  const userData = JSON.parse(localStorage.getItem("userInfo"));
+  let token = JSON.parse(localStorage.getItem("userInfo"))?.token;
+  let userId = JSON.parse(localStorage.getItem("userInfo"))?._id;
+
+  // console.log('postchecking',post.comments);
 
   const [anchorEl, setAnchorEl] = React.useState(null);
   const open = Boolean(anchorEl);
@@ -38,10 +42,7 @@ function Post({ post, setLiked }) {
 
   const [commentaction, setCommentAction] = useState(false);
   const [comment, setComment] = useState(false);
-
-  const userData = JSON.parse(localStorage.getItem("userInfo"));
-  let token = JSON.parse(localStorage.getItem("userInfo"))?.token;
-  let userId = JSON.parse(localStorage.getItem("userInfo"))?._id;
+  // const [reported,setReported] = useState(false)
 
   const config = {
     headers: {
@@ -81,8 +82,8 @@ function Post({ post, setLiked }) {
       });
   };
 
-  const addComment = async()=>{
-    console.log('addComment working');
+  const addComment = async () => {
+    console.log("addComment working");
     console.log(comment);
     await axios
       .post(
@@ -90,7 +91,7 @@ function Post({ post, setLiked }) {
         {
           userId: userData._id,
           postId: post._id,
-          comment:comment,
+          comment: comment,
           name: userData.name,
           pic: userData.pic,
         },
@@ -98,43 +99,110 @@ function Post({ post, setLiked }) {
       )
       .then(() => {
         setLiked(Math.random());
-        setComment('')
+        setComment("");
       });
-  }
+  };
+
+  const removepost = async () => {
+    await axios
+      .post(
+        "/removepost",
+        {
+          postId: post._id,
+        },
+        config
+      )
+      .then(() => {
+        setLiked(Math.random());
+        // handleClick();
+        setAnchorEl(!anchorEl);
+      });
+  };
+
+  const reportpost = async () => {
+    await axios
+      .post(
+        "/reportpost",
+        {
+          userId: userData._id,
+          postId: post._id,
+        },
+        config
+      )
+      .then(() => {
+        setLiked(Math.random());
+        console.log("report post success");
+      });
+  };
+
+  const removecomment = async () => {
+    await axios
+      .post(
+        "/removecomment",
+        {
+          userId: userData._id,
+          postId: post._id,
+        },
+        config
+      )
+      .then(() => {
+        setLiked(Math.random());
+      });
+  };
   // axios requests end
 
   return (
     // main card post start
-    <Card sx={{ margin: 2 , borderRadius:'2em',
-  minWidth:'auto',maxWidth:'800px'}}
-    variant='outlined'
+    <Card
+      sx={{
+        margin: 2,
+        borderRadius: "2em",
+        minWidth: "auto",
+        maxWidth: "800px",
+      }}
+      variant="outlined"
     >
-
       <CardHeader
         avatar={<Avatar aria-label="recipe" src={post?.userId.pic}></Avatar>}
         action={
-          <IconButton aria-label="settings">
-            <MoreVertIcon 
-            onClick={handleClick}/>
-            <Menu
-        id="basic-menu"
-        anchorEl={anchorEl}
-        open={open}
-        onClose={handleClose}
-        MenuListProps={{
-          'aria-labelledby': 'basic-button',
-        }}
-      >
-        <MenuItem onClick={handleClose}>Edit</MenuItem>
-        <MenuItem onClick={handleClose}>Delete</MenuItem>
-      </Menu>
-          </IconButton>
+          <>
+            <Button
+              onClick={() => {
+                console.log("connect working");
+              }}
+            >
+              + Connect
+            </Button>
+            <IconButton aria-label="settings">
+              <MoreVertIcon onClick={handleClick} />
+              <Menu
+                id="basic-menu"
+                anchorEl={anchorEl}
+                open={open}
+                onClose={handleClose}
+                MenuListProps={{
+                  "aria-labelledby": "basic-button",
+                }}
+              >
+                {userId === post.userId._id ? (
+                  <div>
+                    <MenuItem onClick={handleClose}>Edit</MenuItem>
+                    <MenuItem onClick={removepost}>Delete</MenuItem>
+                  </div>
+                ) : (
+                  <MenuItem onClick={reportpost}>
+                    {post.report.includes(userId) ? "Reported" : "Report"}
+                  </MenuItem>
+                )}
+              </Menu>
+            </IconButton>
+          </>
         }
         title={post?.userId.name}
         // subheader="September 14, 2022"
         subheader={post?.date}
       />
-      
+
       <CardContent>
         <Typography variant="body2" color="text.secondary">
           {post?.description}
@@ -148,18 +216,18 @@ function Post({ post, setLiked }) {
         image={post?.image}
         alt="Paella dish"
       /> */}
-      {post.image ? 
+      {post.image ? (
         <CardMedia
-        component="img"
+          component="img"
           sx={{ "object-fit": "contain" }}
           width="800px"
           height="400px"
           src={post?.image}
           alt=""
         ></CardMedia>
-       : 
+      ) : (
         ""
-      }
+      )}
 
       {post.video ? (
         <video
@@ -177,7 +245,7 @@ function Post({ post, setLiked }) {
       <CardActions disableSpacing>
         {post.likes.length ? <span>{post.likes.length}</span> : ""}
 
-{/* like checking scenario */}
+        {/* like checking scenario */}
         {post.likes.includes(userId) ? (
           <IconButton
             aria-label="add to favorites"
@@ -211,85 +279,95 @@ function Post({ post, setLiked }) {
           <ShareIcon />
         </IconButton>
       </CardActions>
-      
+
       <Collapse
         in={commentaction}
         timeout="auto"
         unmountOnExit
-        sx={{ minHeight: "200px", maxHeight: "500px", overflowY:'scroll' }}
+        sx={{ minHeight: "200px", maxHeight: "500px", overflowY: "scroll" }}
       >
-
-          {/* comment card start */}
+        {/* comment card start */}
         <Card sx={{ margin: 5 }}>
-      <CardHeader
-        avatar={<Avatar aria-label="recipe" src={userData.pic}></Avatar>}
-        title={userData.name}
-        // subheader="September 14, 2022"
-        // subheader={post?.date}
-        minHeight="40px"
-        maxHeight="80px"
-      />
-      <CardContent>
-      <TextField
-            sx={{ width: "100%",borderRadius: "20px", }}
-            id="standard-multiline-static"
-            multiline
-            // rows={3}
-            placeholder="Add a comment...."
-            variant="outlined"
-            onChange={(e=>{setComment(e.target.value)})}
+          <CardHeader
+            avatar={<Avatar aria-label="recipe" src={userData.pic}></Avatar>}
+            title={userData.name}
+            // subheader="September 14, 2022"
+            // subheader={post?.date}
+            minHeight="40px"
+            maxHeight="80px"
           />
-          {comment?<Button sx={{marginTop:'10px'}} 
-          variant="contained" 
-          endIcon={<SendIcon />}
-          onClick={()=>{addComment()}}>
-        Post
-      </Button>:""}
-      </CardContent>  
-    </Card>
-{/* comment card end */}
+          <CardContent>
+            <TextField
+              sx={{ width: "100%", borderradius: "20px" }}
+              id="standard-multiline-static"
+              multiline
+              // rows={3}
+              placeholder="Add a comment...."
+              variant="outlined"
+              onChange={(e) => {
+                setComment(e.target.value);
+              }}
+            />
+            {comment ? (
+              <Button
+                sx={{ marginTop: "10px" }}
+                variant="contained"
+                endIcon={<SendIcon />}
+                onClick={() => {
+                  addComment();
+                }}
+              >
+                Post
+              </Button>
+            ) : (
+              ""
+            )}
+          </CardContent>
+        </Card>
+        {/* comment card end */}
 
         {/* db card start*/}
-        { post.comments.map((allcomment)=>(
-      <Card sx={{ margin: 5 }}>
-      <CardHeader
-        avatar={<Avatar aria-label="recipe" src={allcomment.pic}></Avatar>}
-        action={
-          <IconButton aria-label="settings">
-            <MoreVertIcon onClick={handleClick}/>
-            <Menu
-        id="basic-menu"
-        anchorEl={anchorEl}
-        open={open}
-        onClose={handleClose}
-        MenuListProps={{
-          'aria-labelledby': 'basic-button',
-        }}
-      >
-        <MenuItem onClick={handleClose}>Edit</MenuItem>
-        <MenuItem onClick={handleClose}>Delete</MenuItem>
-      </Menu>
-          </IconButton>
-        }
-        title={allcomment.name}
-        // subheader="September 14, 2022"
-        // subheader={post?.date}
-        minHeight="40px"
-        maxHeight="80px"
-      />
+        {post.comments.map((allcomment) => (
+          <Card sx={{ margin: 5 }}>
+            <CardHeader
+              avatar={
+                <Avatar aria-label="recipe" src={allcomment.pic}></Avatar>
+              }
+              action={
+                <IconButton aria-label="settings">
+              {allcomment.userId===userId?<MoreVertIcon onClick={handleClick} />:""}
+              <Menu
+                id="basic-menu"
+                anchorEl={anchorEl}
+                open={open}
+                onClose={handleClose}
+                MenuListProps={{
+                  "aria-labelledby": "basic-button",
+                }}
+              >
+               <MenuItem onClick={handleClose}>Edit</MenuItem>
+                    <MenuItem onClick={removecomment}>Delete</MenuItem>
+              </Menu>
+            </IconButton>
+              }
+              title={allcomment.name}
+              // subheader="September 14, 2022"
+              // subheader={post?.date}
+              minHeight="40px"
+              maxHeight="80px"
+            />
 
-      <CardContent>
-      <Typography variant="body2"
-       color="text.secondary">{allcomment.comment}</Typography>
-      </CardContent>  
-      </Card>
+            <CardContent>
+              <Typography variant="body2" color="text.secondary">
+                {allcomment.comment}
+              </Typography>
+            </CardContent>
+          </Card>
         ))}
-{/* db card end */}
-
+        {/* db card end */}
       </Collapse>
     </Card>
     // main card post end
-
   );
 }
 

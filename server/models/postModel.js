@@ -27,6 +27,8 @@ const postSchema = mongoose.Schema({
     },
   ],
 
+  report:[{type:String}],
+
   date: { type: String, requires: true },
 
   timeStamp: { type: String, required: true },

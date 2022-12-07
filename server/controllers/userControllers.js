@@ -3,7 +3,7 @@ const User = require("../models/userModel");
 const Post = require("../models/postModel");
 const generateToken = require("../utils/generateToken");
 const nodemailer = require("nodemailer");
-const { Schema } = require("mongoose");
+// const { Schema } = require("mongoose");
 let otp;
 
 module.exports = {
@@ -39,7 +39,7 @@ module.exports = {
 
       res.json(req.body);
     } catch (error) {
-      console.log(error);
+      console.log(error); 
     }
   }),
 
@@ -57,11 +57,13 @@ module.exports = {
           token: generateToken(user._id),
         });
       } else {
-        res.status(400);
         throw new Error("Invalid Email or Password!");
       }
     } catch (error) {
       console.log(error);
+      res.json({
+        error:'Invalid Email or Password!'
+      }).status(400)
     }
   }),
 
@@ -72,8 +74,10 @@ module.exports = {
     // console.log(req.body.userData);
     try {
       if (otp == req.body.otp) {
-        console.log("wrking");
+        console.log("otp verified");
+
         const { name, email, password, mobile, pic } = req.body.userData;
+        
         const user = await User.create({
           name,
           email,
@@ -81,6 +85,7 @@ module.exports = {
           mobile,
           pic,
         });
+        
         if (user) {
           res.status(201).json({
             _id: user._id,
@@ -171,6 +176,7 @@ module.exports = {
       }
       res.json(req.body);
     } catch (error) {
+
       console.log(error);
     }
   }),
@@ -247,4 +253,53 @@ module.exports = {
       console.log(error);
     }
   }),
+
+  removePost: asyncHandler(async (req, res) => {
+    console.log("removePost working");
+    try {
+      const { postId } = req.body;
+      Post.remove({ _id: postId }).then(
+        (data) => {
+          console.log("removePost working");
+          // console.log(data);
+          res.status(200).json(data);
+        }
+      );
+    } catch (error) {
+      console.log(error);
+    }
+  }),
+
+  reportPost: asyncHandler(async (req, res) => {
+    // console.log("reportPost working");
+    try {
+      const { postId, userId } = req.body;
+      Post.updateOne({ _id: postId }, { $push: { report: userId } }).then(
+        (data) => {
+          console.log("reportPost working");
+          console.log(data);
+          res.status(200).json(data);
+        }
+      );
+    } catch (error) {
+      console.log(error);
+    }
+  }),
+
+  removeComment: asyncHandler(async (req, res) => {
+    // console.log("removeComment working");
+    try {
+      const { postId, userId } = req.body;
+      Post.updateOne({ _id: postId }, { $pull: { likes: userId } }).then(
+        (data) => {
+          console.log("removeComment working");
+          // console.log(data);
+          res.status(200).json(data);
+        }
+      );
+    } catch (error) {
+      console.log(error);
+    }
+  }),
+
 };
