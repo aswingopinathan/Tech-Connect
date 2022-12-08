@@ -4,6 +4,7 @@ const Post = require("../models/postModel");
 const generateToken = require("../utils/generateToken");
 const nodemailer = require("nodemailer");
 // const { Schema } = require("mongoose");
+const ObjectId = require("mongoose").Types.ObjectId;
 let otp;
 
 module.exports = {
@@ -29,7 +30,7 @@ module.exports = {
           rejectUnauthorized: false,
         },
       });
- 
+
       let info = await transporter.sendMail({
         from: process.env.USER_NAME,
         to: email,
@@ -39,7 +40,7 @@ module.exports = {
 
       res.json(req.body);
     } catch (error) {
-      console.log(error); 
+      console.log(error);
     }
   }),
 
@@ -61,9 +62,11 @@ module.exports = {
       }
     } catch (error) {
       console.log(error);
-      res.json({
-        error:'Invalid Email or Password!'
-      }).status(400)
+      res
+        .json({
+          error: "Invalid Email or Password!",
+        })
+        .status(400);
     }
   }),
 
@@ -77,7 +80,7 @@ module.exports = {
         console.log("otp verified");
 
         const { name, email, password, mobile, pic } = req.body.userData;
-        
+
         const user = await User.create({
           name,
           email,
@@ -85,7 +88,7 @@ module.exports = {
           mobile,
           pic,
         });
-        
+
         if (user) {
           res.status(201).json({
             _id: user._id,
@@ -176,7 +179,6 @@ module.exports = {
       }
       res.json(req.body);
     } catch (error) {
-
       console.log(error);
     }
   }),
@@ -234,21 +236,20 @@ module.exports = {
 
     try {
       const { postId, userId, comment, name, pic } = req.body;
-      console.log('postId',postId);
-      console.log('userId',userId);
-      console.log('comment',comment);
-      console.log('name',name);
-      console.log('pic',pic);
+      console.log("postId", postId);
+      console.log("userId", userId);
+      console.log("comment", comment);
+      console.log("name", name);
+      console.log("pic", pic);
 
-
-
-      Post.updateOne({ _id: postId }, { $push: { comments: {userId,comment,name,pic} } }).then(
-        (data) => {
-          console.log("addcomment db  working");
-          console.log('data',data);
-          res.status(200).json(data);
-        }
-      );
+      Post.updateOne(
+        { _id: postId },
+        { $push: { comments: { userId, comment, name, pic } } }
+      ).then((data) => {
+        console.log("addcomment db  working");
+        console.log("data", data);
+        res.status(200).json(data);
+      });
     } catch (error) {
       console.log(error);
     }
@@ -258,13 +259,11 @@ module.exports = {
     console.log("removePost working");
     try {
       const { postId } = req.body;
-      Post.remove({ _id: postId }).then(
-        (data) => {
-          console.log("removePost working");
-          // console.log(data);
-          res.status(200).json(data);
-        }
-      );
+      Post.remove({ _id: postId }).then((data) => {
+        console.log("removePost working");
+        // console.log(data);
+        res.status(200).json(data);
+      });
     } catch (error) {
       console.log(error);
     }
@@ -289,17 +288,64 @@ module.exports = {
   removeComment: asyncHandler(async (req, res) => {
     // console.log("removeComment working");
     try {
-      const { postId, userId } = req.body;
-      Post.updateOne({ _id: postId }, { $pull: { likes: userId } }).then(
-        (data) => {
-          console.log("removeComment working");
-          // console.log(data);
-          res.status(200).json(data);
-        }
-      );
+      const { postId, userId, commentId } = req.body;
+      console.log('commentId',commentId);
+      Post.updateOne(
+        { _id: postId, "comments._id": { $eq: new ObjectId(commentId) } },
+        { $pull: { comments: { _id: new ObjectId(commentId) } } }
+      ).then((data) => {
+        console.log("removeComment working");
+        // console.log(data);
+        res.status(200).json(data);
+      });
     } catch (error) {
       console.log(error);
     }
   }),
 
+  editProfile: asyncHandler(async (req, res) => {
+    // console.log("editProfile working");
+    try {
+      const { userId, name, jobstatus, currentposition, place } = req.body;
+      User.updateOne(
+        { _id: userId },
+        {
+          $set: {
+            name: name,
+            jobStatus: jobstatus,
+            jobPosition: currentposition,
+            place: place,
+          },
+        }
+      ).then((data) => {
+        console.log("userId", userId);
+        console.log("name", name);
+        console.log("jobstatus", jobstatus);
+        console.log("editProfile working");
+        console.log("currentposition", currentposition);
+        console.log("place", place);
+        // console.log(data);
+        res.status(200).json(data);
+      });
+    } catch (error) {
+      console.log(error);
+    }
+  }),
+
+  getUser: asyncHandler(async (req, res) => {
+    console.log("getUser working");
+
+    try {
+      const userId = req.query.userId;
+      // const userId = this.$route.params.userId
+      console.log("userId", userId);
+      User.find({ _id: userId }).then((data) => {
+        console.log("getUser working");
+        console.log(data);
+        res.status(200).json(data);
+      });
+    } catch (error) {
+      console.log(error);
+    }
+  }),
 };

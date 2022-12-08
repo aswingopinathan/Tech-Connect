@@ -41,6 +41,9 @@ const userSchema=mongoose.Schema(
         resume:{
             type:String
         },
+        place:{
+            type:String
+        },
     },
     {
         timestamps: true,

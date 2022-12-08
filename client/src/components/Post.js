@@ -29,7 +29,7 @@ function Post({ post, setLiked }) {
   let token = JSON.parse(localStorage.getItem("userInfo"))?.token;
   let userId = JSON.parse(localStorage.getItem("userInfo"))?._id;
 
-  // console.log('postchecking',post.comments);
+  console.log('postchecking',post.comments);
 
   const [anchorEl, setAnchorEl] = React.useState(null);
   const open = Boolean(anchorEl);
@@ -135,18 +135,21 @@ function Post({ post, setLiked }) {
       });
   };
 
-  const removecomment = async () => {
+  const removecomment = async (id) => {
     await axios
       .post(
         "/removecomment",
         {
           userId: userData._id,
           postId: post._id,
+          commentId: id,
         },
         config
       )
       .then(() => {
         setLiked(Math.random());
+        setAnchorEl(!anchorEl);
+
       });
   };
   // axios requests end
@@ -328,7 +331,7 @@ function Post({ post, setLiked }) {
 
         {/* db card start*/}
         {post.comments.map((allcomment) => (
-          <Card sx={{ margin: 5 }}>
+          <Card sx={{ margin: 5 }} >
             <CardHeader
               avatar={
                 <Avatar aria-label="recipe" src={allcomment.pic}></Avatar>
@@ -346,7 +349,9 @@ function Post({ post, setLiked }) {
                 }}
               >
                <MenuItem onClick={handleClose}>Edit</MenuItem>
-                    <MenuItem onClick={removecomment}>Delete</MenuItem>
+                    <MenuItem onClick={()=>{
+                      // removecomment(allcomment._id)
+                    console.log(allcomment._id);}}>Delete</MenuItem>
               </Menu>
             </IconButton>
               }
