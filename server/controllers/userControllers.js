@@ -332,15 +332,15 @@ module.exports = {
     }
   }),
 
-  getUser: asyncHandler(async (req, res) => {
-    console.log("getUser working");
+  findUser: asyncHandler(async (req, res) => {
+    console.log("findUser working");
 
     try {
       const userId = req.query.userId;
       // const userId = this.$route.params.userId
       console.log("userId", userId);
       User.find({ _id: userId }).then((data) => {
-        console.log("getUser working");
+        console.log("findUser working");
         console.log(data);
         res.status(200).json(data);
       });
@@ -348,4 +348,23 @@ module.exports = {
       console.log(error);
     }
   }),
+
+  getUser: asyncHandler(async (req, res) => {
+    console.log("getUser working");
+
+    try {
+      const userId = req.params.id;
+      // const userId = this.$route.params.userId
+      console.log("userId", userId);
+      User.find({ _id: userId }).then((data) => {
+        console.log("getUser working");
+         [data] = data;
+        console.log(data);
+        res.status(200).json(data);
+      });
+    } catch (error) {  
+      console.log(error);
+    }
+  }),
+  
 };

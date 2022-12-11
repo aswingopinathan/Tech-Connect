@@ -20,11 +20,12 @@ module.exports = {
             const chat = await ChatModel.find({
                 members: {$in: [req.params.userId]}
             })
+            console.log('chat',chat);
             res.status(200).json(chat)
         } catch (error) {
             res.status(500).json(error)
         }
-    }),
+    }), 
 
     findChat : asyncHandler(async(req,res)=>{
         try {

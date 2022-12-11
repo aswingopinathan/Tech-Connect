@@ -21,7 +21,7 @@ console.log('userId',userId);
         authorization :`Bearer ${token}`
       },
     };
-    axios.get(`/getuser?userId=${userId}`,
+    axios.get(`/finduser?userId=${userId}`,
     // { userId: userId },
     config).then((data)=>{
       // console.log('data.data[0]',data.data[0]);
@@ -29,7 +29,7 @@ console.log('userId',userId);
     })
      // eslint-disable-next-line
   },[userupdate])
-  return (
+  return ( 
     <div>
       <NavBar/>
       <SideBar/>

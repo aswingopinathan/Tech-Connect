@@ -1,5 +1,5 @@
 const express = require("express");
-const { registerUser, authUser, verifyOtp, resendOtp, addPost, getPost, addLike, removeLike, addComment, removePost, reportPost, removeComment, editProfile, getUser} = require("../controllers/userControllers");
+const { registerUser, authUser, verifyOtp, resendOtp, addPost, getPost, addLike, removeLike, addComment, removePost, reportPost, removeComment, editProfile, findUser, getUser} = require("../controllers/userControllers");
 const { verifyToken } = require("../middlewares/tokenMiddleware")
 const router=express.Router();
 
@@ -17,8 +17,10 @@ router.post('/removepost',verifyToken,removePost)
 router.post('/reportpost',verifyToken,reportPost)
 router.post('/removecomment',verifyToken,removeComment)
 router.post('/editprofile',verifyToken,editProfile)
-router.get('/getuser',getUser)
+router.get('/finduser',verifyToken,findUser)
 
+router.get('/user/:id',verifyToken,getUser)
+// router.get('/message/:id',getUser)
 
 
 module.exports=router;
