@@ -100,7 +100,12 @@ function NavBar({ mode, setMode }) {
             <WorkIcon />
           </Badge>
 
-          <Badge badgeContent={4} color="error">
+          <Badge badgeContent={4}
+           color="error"
+           sx={{ cursor: "pointer" }}
+           onClick={(e) => {
+             navigate("/chat");
+           }}>
             <Mail />
           </Badge>
 

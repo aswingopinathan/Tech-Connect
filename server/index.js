@@ -4,6 +4,8 @@ const app=express();
 const connectDB=require("./config/db");
 const userRoutes=require("./routes/userRoutes");
 const adminRoutes=require("./routes/adminRoutes");
+const ChatRoute=require("./routes/ChatRoute");
+const MessageRoute=require("./routes/MessageRoute");
 
 const { notFound, errorHandler } = require("./middlewares/errorMiddleware");
 const cors = require("cors");
@@ -17,10 +19,14 @@ app.use(express.urlencoded({ extended: true }));
 app.use(cors());
 
 //routing
-app.use("/",userRoutes);
+app.use("/",userRoutes); 
 app.use("/admin",adminRoutes);
+app.use("/chat",ChatRoute);
+app.use("/message",MessageRoute);
 
-//error middlewares
+
+
+//error middlewares 
 app.use(notFound); 
 app.use(errorHandler);
 
