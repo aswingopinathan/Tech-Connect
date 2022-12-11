@@ -2,11 +2,12 @@ import React, { useEffect } from "react";
 import { useState } from "react";
 import { getUser } from "../../api/UserRequest";
 
-function Conversation({ data, currentUserId }) {
+function Conversation({ data, currentUserId,online }) {
   const [userData, setUserData] = useState(null);
   useEffect(() => {
+    console.log('currentUserId',currentUserId);
     const userId = data.members.find((id) => id !== currentUserId);
-    // console.log('userId',userId);
+    console.log('userId',userId);
     const getUserData = async () => {
       try {
         const { data } = await getUser(userId);
@@ -24,7 +25,7 @@ function Conversation({ data, currentUserId }) {
     <>
       <div className="follower conversation">
         <div style={{display:'flex'}}>
-          <div className="online-dot"></div>
+          {online && <div className="online-dot"></div>}
           <img
             src={userData?.pic}
             alt=""
@@ -34,7 +35,7 @@ function Conversation({ data, currentUserId }) {
           <div className="name" style={{ fontSize: "0.8rem" }}>
             <span>{userData?.name}</span>
             <br></br>
-            <span>Online</span>
+            <span>{online? "Online":"Offline"}</span>
           </div>
         </div>
       </div>
