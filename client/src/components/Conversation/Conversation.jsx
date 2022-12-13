@@ -1,6 +1,7 @@
 import React, { useEffect } from "react";
 import { useState } from "react";
 import { getUser } from "../../api/UserRequest";
+import "./Conversation.css";
 
 function Conversation({ data, currentUserId,online }) {
   const [userData, setUserData] = useState(null);
@@ -23,19 +24,20 @@ function Conversation({ data, currentUserId,online }) {
   //  console.log('pic',pic);
   return (
     <>
-      <div className="follower conversation">
+      <div className="follower conversation" style={{scrollbarWidth:'none'}}>
         <div style={{display:'flex'}}>
           {online && <div className="online-dot"></div>}
           <img
             src={userData?.pic}
             alt=""
             className="followerImage"
-            style={{ width: "50px", height: "50px" }}
+            style={{ width: "50px", height: "50px",borderRadius:'50%' }}
           />
-          <div className="name" style={{ fontSize: "0.8rem" }}>
-            <span>{userData?.name}</span>
-            <br></br>
+          <div className="name" style={{ fontSize: "0.8rem",display:'flex',alignItems:'center' }}>
+            <div>
+            <span>{userData?.name}</span><br></br>
             <span>{online? "Online":"Offline"}</span>
+            </div>
           </div>
         </div>
       </div>

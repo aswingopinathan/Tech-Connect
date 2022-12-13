@@ -83,7 +83,7 @@ function ChatBox({ chat, currentUser,setSendMessage,receiveMessage }) {
 
   return (
     <>
-      <div className="ChatBox-container">
+      <div className="ChatBox-container" style={{scrollbarWidth:'none'}}>
         {chat?(<>
           <div className="chat-header">
             <div className="follower">
@@ -92,14 +92,15 @@ function ChatBox({ chat, currentUser,setSendMessage,receiveMessage }) {
                   src={userData?.pic}
                   alt=""
                   className="followerImage"
-                  style={{ width: "50px", height: "50px" }}
+                  style={{ width: "50px", height: "50px",borderRadius:'50%' }}
                 />
-                <div className="name" style={{ fontSize: "0.8rem" }}>
+
+                <div className="name" style={{ fontSize: "0.8rem",display:'flex',alignItems:'center' }}>
                   <span>{userData?.name}</span>
                 </div>
               </div>
             </div>
-      <hr style={{width: '85%',border: '0.1px solid #ececec'}}/>
+      <hr style={{width: '95%',border: '0.1px solid #ececec'}}/>
           </div>
 {/* chatBox Messages */}
         <div className="chat-body">

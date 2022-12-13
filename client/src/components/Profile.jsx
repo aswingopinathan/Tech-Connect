@@ -17,7 +17,7 @@ import Grid from "@mui/material/Grid";
 import Link from "@mui/material/Link";
 import ButtonGroup from "@mui/material/ButtonGroup";
 
-function Profile({ userdata , setUserUpdate }) {
+function Profile({ userdata , setUserUpdate,mode, setMode }) {
   console.log("userdata",userdata);
   const style = {
     position: "absolute",
@@ -39,7 +39,6 @@ function Profile({ userdata , setUserUpdate }) {
   const handleClose = () => setClose(false);
 
 
-  // const [openprofile, setOpenProfile] = useState(false);
   const [openabout, setOpenAbout] = useState(false);
 
   const [name, setName] = useState("");
@@ -84,7 +83,7 @@ function Profile({ userdata , setUserUpdate }) {
   };
 
   return (
-    <div style={{ backgroundColor: "#f2ebeb" }}>
+    <div style={{ backgroundColor: "#f2ebeb" }} >
       {/* modal start */}
       <div>
         {/* <Button onClick={handleOpen}>Open modal</Button> */}

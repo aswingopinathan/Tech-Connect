@@ -4,6 +4,7 @@ import Post from './Post'
 import axios from "axios";
 import {useEffect,useState} from 'react'
 import { UserContext } from '../context/Context';
+// import { getAllUsers } from '../api/UserRequest';
 
 
 function Feed() {
@@ -12,6 +13,8 @@ function Feed() {
 const [liked,setLiked] = useState(false);
 
   let token = JSON.parse(localStorage.getItem("userInfo"))?.token;
+
+ 
 
   useEffect(()=>{
     const config = {
@@ -29,7 +32,7 @@ const [liked,setLiked] = useState(false);
   return (
     <Box flex={4} p={2}>
       {posts?.map((post,index)=>(
-      <Post post={post} key={index} setLiked={setLiked}/>
+      <Post post={post} key={index} setLiked={setLiked} />
       ))}
     </Box>
   )

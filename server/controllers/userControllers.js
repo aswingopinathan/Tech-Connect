@@ -241,10 +241,12 @@ module.exports = {
       console.log("comment", comment);
       console.log("name", name);
       console.log("pic", pic);
+      // date = new Date().toDateString()
+      date = new Date()
 
       Post.updateOne(
         { _id: postId },
-        { $push: { comments: { userId, comment, name, pic } } }
+        { $push: { comments: { userId, comment, name, pic ,date} } }
       ).then((data) => {
         console.log("addcomment db  working");
         console.log("data", data);
@@ -307,28 +309,37 @@ module.exports = {
     // console.log("editProfile working");
     try {
       const { userId, name, jobstatus, currentposition, place } = req.body;
-      User.updateOne(
-        { _id: userId },
-        {
-          $set: {
-            name: name,
-            jobStatus: jobstatus,
-            jobPosition: currentposition,
-            place: place,
-          },
-        }
-      ).then((data) => {
-        console.log("userId", userId);
-        console.log("name", name);
-        console.log("jobstatus", jobstatus);
-        console.log("editProfile working");
-        console.log("currentposition", currentposition);
-        console.log("place", place);
-        // console.log(data);
-        res.status(200).json(data);
-      });
+      
+      let existId = User.find({ _id:userId })
+      if(existId){
+        User.updateOne(
+          // invalid id
+          { _id: userId },
+          {
+            $set: {
+              name: name,
+              jobStatus: jobstatus,
+              jobPosition: currentposition,
+              place: place,
+            },
+          } 
+        ).then((data) => {
+          console.log("userId", userId);
+          console.log("name", name);
+          console.log("jobstatus", jobstatus);
+          console.log("editProfile working");
+          console.log("currentposition", currentposition);
+          console.log("place", place);
+          // console.log(data);
+          res.status(200).json(data);
+        });
+      }else{
+        throw new Error("invalid userid")
+      }
     } catch (error) {
       console.log(error);
+      res.status(500).json(error)
+
     }
   }),
 
@@ -359,6 +370,20 @@ module.exports = {
       User.find({ _id: userId }).then((data) => {
         console.log("getUser working");
          [data] = data;
+        console.log(data);
+        res.status(200).json(data);
+      });
+    } catch (error) {  
+      console.log(error);
+    }
+  }),
+
+  getAllUsers: asyncHandler(async (req, res) => {
+    console.log("getAllUsers working");
+
+    try {
+      User.find({}).then((data) => {
+        console.log("getAllUsers working");
         console.log(data);
         res.status(200).json(data);
       });

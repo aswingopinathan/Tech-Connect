@@ -4,8 +4,15 @@ import Profile from '../../components/Profile'
 import SideBar from '../../components/SideBar'
 import axios from "axios";
 import {useEffect,useState} from 'react'
+import { createTheme, ThemeProvider } from "@mui/material";
 
 function ProfilePage() {
+  const [mode,setMode]=useState("light");
+const darkTheme=createTheme({
+  palette:{
+    mode:mode
+  }
+})
   let token = JSON.parse(localStorage.getItem("userInfo"))?.token;
   let userId = JSON.parse(localStorage.getItem("userInfo"))?._id;
   
@@ -30,11 +37,13 @@ console.log('userId',userId);
      // eslint-disable-next-line
   },[userupdate])
   return ( 
+    <ThemeProvider theme={darkTheme}>
     <div>
-      <NavBar/>
-      <SideBar/>
-      <Profile userdata={userdata} setUserUpdate={setUserUpdate}/>
+      <NavBar setMode={setMode} mode={mode}/>
+      <SideBar setMode={setMode} mode={mode}/>
+      <Profile userdata={userdata} setUserUpdate={setUserUpdate} setMode={setMode} mode={mode}/>
     </div>
+    </ThemeProvider>
   )
 }
 

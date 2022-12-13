@@ -10,7 +10,7 @@ import {
   Toolbar,
   Typography,
 } from "@mui/material";
-import React from "react";
+import React, { useEffect } from "react";
 import ConnectWithoutContactIcon from "@mui/icons-material/ConnectWithoutContact";
 import Mail from "@mui/icons-material/Mail";
 import Notifications from "@mui/icons-material/Notifications";
@@ -20,6 +20,7 @@ import HomeIcon from "@mui/icons-material/Home";
 import PeopleIcon from "@mui/icons-material/People";
 import WorkIcon from "@mui/icons-material/Work";
 import SearchIcon from '@mui/icons-material/Search';
+import { getUser } from "../api/UserRequest";
 
 const StyledToolbar = styled(Toolbar)({
   display: "flex",
@@ -40,10 +41,29 @@ const Icons = styled(Box)(({ theme }) => ({
 }));
 
 function NavBar({ mode, setMode }) {
+
   const [open, setOpen] = useState(false);
+  const [userData, setUserData] = useState(null);
+
   const navigate = useNavigate();
   let imageUrl = JSON.parse(localStorage.getItem("userInfo"))?.pic;
   let userName = JSON.parse(localStorage.getItem("userInfo"))?.name;
+  let userId = JSON.parse(localStorage.getItem("userInfo"))?._id;
+
+  useEffect(()=>{
+    const getUserData = async () => {
+      try {
+        // console.log('chatbox',userId);
+        const { data } = await getUser(userId);
+        setUserData(data.data);
+        console.log("navbar", data);
+      } catch (error) { 
+        console.log(error);
+      }
+    };
+     getUserData();
+  },[])
+  console.log('userData',userData);
 
   return (
     <AppBar position="sticky">

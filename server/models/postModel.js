@@ -23,7 +23,8 @@ const postSchema = mongoose.Schema({
       name: String,
       comment: String,
       pic: String,
-      timeStamp: Date,
+      // timeStamp: Date,
+      date: { type: String, requires: true }, 
     },
   ],
 

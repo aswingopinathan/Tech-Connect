@@ -1,15 +1,37 @@
 import { Box, ListItemText, Typography } from "@mui/material";
-import React from "react";
+import React, { useEffect, useState } from "react";
 import Avatar from "@mui/material/Avatar";
 import AvatarGroup from "@mui/material/AvatarGroup";
-import ImageList from "@mui/material/ImageList";
-import ImageListItem from "@mui/material/ImageListItem";
+// import ImageList from "@mui/material/ImageList";
+// import ImageListItem from "@mui/material/ImageListItem";
 import ListItemAvatar from '@mui/material/ListItemAvatar';
 import ListItem from '@mui/material/ListItem';
 import Divider from '@mui/material/Divider';
 import List from '@mui/material/List';
+import { getAllUsers } from "../api/UserRequest";
 
 function RightBar() {
+
+  // let userId = JSON.parse(localStorage.getItem("userInfo"))?._id;
+
+const [users,setUsers] = useState([])
+useEffect(()=>{
+  const allUsers= async ()=>{
+    try {
+      let { data } = await getAllUsers();
+      console.log("rightbar",data);
+
+      // data = data.find((id)=> id !==userId)
+      // console.log('newdata',data);
+      setUsers(data);
+  
+    } catch (error) { 
+      console.log(error);
+    }
+  }
+  allUsers();
+},[])
+
   return (
     <Box flex={2} p={2} sx={{ display: { xs: "none", sm: "none",md: "block" } }}>
       <Box position="fixed" width={300}>
@@ -46,7 +68,7 @@ function RightBar() {
             src="https://material-ui.com/static/images/avatar/7.jpg"
           />
         </AvatarGroup>
-        <Typography
+        {/* <Typography
           variant="h6"
           fontWeight={100}
           marginTop={2}
@@ -73,18 +95,22 @@ function RightBar() {
               alt=""
             />
           </ImageListItem>
-        </ImageList>
+        </ImageList> */}
+
         <Typography variant="h6" fontWeight={100} mt={2}>
-          Latest Conversations
+          People you may know
         </Typography>
         
         <List sx={{ width: '100%', maxWidth: 360, bgcolor: 'background.paper' }}>
-      <ListItem alignItems="flex-start">
+          
+        {users.map((usersall)=>(
+           <>
+          <ListItem alignItems="flex-start">
         <ListItemAvatar>
-          <Avatar alt="Remy Sharp" src="https://material-ui.com/static/images/avatar/1.jpg" />
+          <Avatar alt="Remy Sharp" src={usersall.pic} />
         </ListItemAvatar>
         <ListItemText
-          primary="Brunch this weekend?"
+          primary={usersall.name}
           secondary={
             <React.Fragment>
               <Typography
@@ -93,15 +119,18 @@ function RightBar() {
                 variant="body2"
                 color="text.primary"
               >
-                Ali Connors
+                +Connect
               </Typography>
-              {" — I'll be in your neighborhood doing errands this…"}
+              {/* {" — I'll be in your neighborhood doing errands this…"} */}
             </React.Fragment>
           }
         />
       </ListItem>
       <Divider variant="inset" component="li" />
-      <ListItem alignItems="flex-start">
+          </>
+        ))}
+
+      {/* <ListItem alignItems="flex-start">
         <ListItemAvatar>
           <Avatar alt="Travis Howard" src="https://material-ui.com/static/images/avatar/2.jpg" />
         </ListItemAvatar>
@@ -143,7 +172,7 @@ function RightBar() {
             </React.Fragment>
           }
         />
-      </ListItem>
+      </ListItem> */}
     </List>
       </Box>
     </Box>

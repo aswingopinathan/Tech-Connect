@@ -2,7 +2,6 @@ import React from "react";
 import {
   Avatar,
   Card,
-  // Box,
   Button,
   CardActions,
   CardContent,
@@ -10,8 +9,8 @@ import {
   CardMedia,
   IconButton,
   Typography,
-  Menu,
-  MenuItem,
+  Menu, 
+  MenuItem, 
 } from "@mui/material";
 import SendIcon from "@mui/icons-material/Send";
 import TextField from "@mui/material/TextField";
@@ -23,6 +22,8 @@ import CommentIcon from "@mui/icons-material/Comment";
 import axios from "axios";
 import { useState } from "react";
 import Collapse from "@mui/material/Collapse";
+import {format} from "timeago.js"
+
 
 function Post({ post, setLiked }) {
   const userData = JSON.parse(localStorage.getItem("userInfo"));
@@ -169,13 +170,13 @@ function Post({ post, setLiked }) {
         avatar={<Avatar aria-label="recipe" src={post?.userId.pic}></Avatar>}
         action={
           <>
-            <Button
+           {userId === post.userId._id?(""):(<Button
               onClick={() => {
-                console.log("connect working");
+                console.log("connect working"); 
               }}
-            >
+            > 
               + Connect
-            </Button>
+            </Button>)}
             <IconButton aria-label="settings">
               <MoreVertIcon onClick={handleClick} />
               <Menu
@@ -203,7 +204,7 @@ function Post({ post, setLiked }) {
         }
         title={post?.userId.name}
         // subheader="September 14, 2022"
-        subheader={post?.date}
+        subheader={format(post?.date)}
       />
 
       <CardContent>
@@ -308,7 +309,11 @@ function Post({ post, setLiked }) {
               placeholder="Add a comment...."
               variant="outlined"
               onChange={(e) => {
+                if(e.target.value.match(/^[A-Za-z]+$/) ){
                 setComment(e.target.value);
+                }else{
+                setComment("");
+                }
               }}
             />
             {comment ? (
@@ -357,7 +362,8 @@ function Post({ post, setLiked }) {
               }
               title={allcomment.name}
               // subheader="September 14, 2022"
-              // subheader={post?.date}
+              subheader={format(allcomment.date)}
+              // juku{}
               minHeight="40px"
               maxHeight="80px"
             />
