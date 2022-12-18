@@ -31,7 +31,7 @@ function Conversation({ data, currentUserId,online }) {
             src={userData?.pic}
             alt=""
             className="followerImage"
-            style={{ width: "50px", height: "50px",borderRadius:'50%' }}
+            style={{ width: "50px", height: "50px",borderradius:'50%' }}
           />
           <div className="name" style={{ fontSize: "0.8rem",display:'flex',alignItems:'center' }}>
             <div>

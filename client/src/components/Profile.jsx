@@ -3,22 +3,19 @@ import {
   Avatar,
   Box,
   Button,
-  styled,
   TextField,
   Typography,
 } from "@mui/material";
 import EditIcon from "@mui/icons-material/Edit";
 import Modal from "@mui/material/Modal";
 import { useState } from "react";
-import { Stack } from "@mui/system";
 import CloseIcon from "@mui/icons-material/Close";
 import axios from "axios";
 import Grid from "@mui/material/Grid";
-import Link from "@mui/material/Link";
-import ButtonGroup from "@mui/material/ButtonGroup";
+// import Loading from "./Loading";
 
-function Profile({ userdata , setUserUpdate,mode, setMode }) {
-  console.log("userdata",userdata);
+function Profile({ userdata, setUserUpdate, mode, setMode }) {
+
   const style = {
     position: "absolute",
     top: "50%",
@@ -32,24 +29,19 @@ function Profile({ userdata , setUserUpdate,mode, setMode }) {
   };
 
   const [openprofile, setOpenProfile] = useState(false);
-  const [close, setClose] = useState(false);
- 
-  const handleOpenProfile = () => setOpenProfile(true); 
+  const handleOpenProfile = () => setOpenProfile(true);
   const handleCloseProfile = () => setOpenProfile(false);
-  const handleClose = () => setClose(false);
-
-
-  const [openabout, setOpenAbout] = useState(false);
 
   const [name, setName] = useState("");
   const [jobstatus, setJobStatus] = useState("");
   const [currentposition, setCurrentPosition] = useState("");
   const [place, setPlace] = useState("");
 
-  const [about, setAbout] = useState("");
+  const [openabout, setOpenAbout] = useState(false);
+  const handleOpenAbout = () => setOpenAbout(true);
+  const handleCloseAbout = () => setOpenAbout(false);
 
-  // let pic = JSON.parse(localStorage.getItem("userInfo"))?.pic;
-  // let username = JSON.parse(localStorage.getItem("userInfo"))?.name;
+  const [about, setAbout] = useState("");
 
   let userId = JSON.parse(localStorage.getItem("userInfo"))?._id;
   let token = JSON.parse(localStorage.getItem("userInfo"))?.token;
@@ -76,85 +68,244 @@ function Profile({ userdata , setUserUpdate,mode, setMode }) {
         config
       )
       .then(() => {
-        setOpenProfile(false)
+        setOpenProfile(false);
         setUserUpdate(Math.random());
       });
-      // console.log('editdata',data);
   };
 
-  return (
-    <div style={{ backgroundColor: "#f2ebeb" }} >
-      {/* modal start */}
-      <div>
-        {/* <Button onClick={handleOpen}>Open modal</Button> */}
-        <Modal
-          open={openprofile}
-          onClose={handleCloseProfile}
-          aria-labelledby="modal-modal-title"
-          aria-describedby="modal-modal-description"
-        >
-          <Box sx={style}>
-          <div style={{ display: "flex", justifyContent: "end"}}>
-            <Button onClick={handleCloseProfile}>
-              <CloseIcon/>
-            </Button>
-            </div>
-            <div style={{ display: "flex", justifyContent: "center" }}>
-              <Typography id="modal-modal-title" variant="h6" component="h2">
-                Edit Profile
-              </Typography>
-            </div>
-            
-            <Grid container spacing={2}>
-              <Grid item xs={12}>
-                <TextField id="standard-basic" label="Name" variant="standard"
-                fullWidth
-                onChange={(e)=>setName(e.target.value)}>
-                </TextField>
-              </Grid>
-              <Grid item xs={12}>
-                <TextField id="standard-basic" label="Jobstatus" variant="standard"
-                fullWidth
-                onChange={(e)=>setJobStatus(e.target.value)}>
-                </TextField>
-              </Grid>
-              <Grid item xs={12}>
-                <TextField id="standard-basic" label="Currentposition" variant="standard"
-                fullWidth
-                onChange={(e)=>setCurrentPosition(e.target.value)}>
-                </TextField>
-              </Grid>
-              <Grid item xs={12}>
-                <TextField id="standard-basic" label="Place" variant="standard"
-                fullWidth
-                onChange={(e)=>setPlace(e.target.value)}>
-                </TextField>
-              </Grid>
-            </Grid>
+  const handleAbout = async () => {
+    console.log("handleAbout working");
+    await axios
+      .post(
+        "/editabout",
+        {
+          userId: userId,
+          about: about,
+        },
+        config
+      )
+      .then(() => { 
+        console.log('editAbout successfull');
+        setOpenAbout(false);
+        setUserUpdate(Math.random());
+      });
+  };
+// 
+  const [picMessage, setPicMessage] = useState();
+  const [pic, setPic] = useState();
+  const [loading, setLoading] = useState(false);
 
-            <div style={{ display: "flex", justifyContent: "end", paddingTop:'10px'}}>
-            <Button 
-            variant="contained"
-            onClick={handleProfile}>
+  const imageUpload = (pics) => {
+    if (!pics) {
+      return setPicMessage("Please select an image");
+    }
+    setPicMessage(null);
+
+    if (pics.type === "image/jpeg" || pics.type === "image/png") {
+      setLoading(true);
+
+      const data = new FormData();
+
+      data.append("file", pics);
+      data.append("upload_preset", "techconnect");
+      data.append("cloud_name", process.env.CLOUD_NAME);
+      fetch(`https://api.cloudinary.com/v1_1/dtsqr3v76/image/upload`, {
+        method: "post",
+        body: data,
+      })
+        .then((res) => res.json())
+        .then((data) => {
+          console.log(data);
+          setLoading(false);
+          console.log("data.url.toString()", data.url.toString());
+          setPic(data.url.toString());
+        })
+        .catch((err) => {
+          console.log(err);
+        });
+    } else {
+      return setPicMessage("Please select an image");
+    }
+  };
+
+  const submitPic = async () => {
+    console.log("submitPic working");
+    console.log("userId", userId);
+    console.log("pic", pic);
+    if (pic) {
+      try {
+        setLoading(true);
+        const { data } = await axios.post(
+          "/picupdate",
+          {
+            pic: pic,
+            userId: userId,
+          },
+          config
+        );
+        console.log(data);
+        setLoading(false);
+        setPic(null);
+        setUserUpdate(Math.random());
+      } catch (error) {
+        console.log(error);
+        setLoading(false);
+      }
+    } else {
+      console.log("No pic data");
+    }
+  };
+//
+  return (
+    <Box>
+      {/* modal1 start */}
+
+      <Modal
+        open={openprofile}
+        onClose={handleCloseProfile}
+        aria-labelledby="modal-modal-title"
+        aria-describedby="modal-modal-description"
+      >
+        <Box sx={style}>
+          <div style={{ display: "flex", justifyContent: "end" }}>
+            <Button onClick={handleCloseProfile}>
+              <CloseIcon />
+            </Button>
+          </div>
+          <div style={{ display: "flex", justifyContent: "center" }}>
+            <Typography
+              id="modal-modal-title"
+              variant="h6"
+              component="h2"
+              color={"text.primary"}
+            >
+              Edit Profile
+            </Typography>
+          </div>
+
+          <Grid container spacing={2}>
+            <Grid item xs={12}>
+              <TextField
+                id="standard-basic"
+                label="Name"
+                variant="standard"
+                fullWidth
+                onChange={(e) => setName(e.target.value)}
+              ></TextField>
+            </Grid>
+            <Grid item xs={12}>
+              <TextField
+                id="standard-basic"
+                label="Jobstatus"
+                variant="standard"
+                fullWidth
+                onChange={(e) => setJobStatus(e.target.value)}
+              ></TextField>
+            </Grid>
+            <Grid item xs={12}>
+              <TextField
+                id="standard-basic"
+                label="Currentposition"
+                variant="standard"
+                fullWidth
+                onChange={(e) => setCurrentPosition(e.target.value)}
+              ></TextField>
+            </Grid>
+            <Grid item xs={12}>
+              <TextField
+                id="standard-basic"
+                label="Place"
+                variant="standard"
+                fullWidth
+                onChange={(e) => setPlace(e.target.value)}
+              ></TextField>
+            </Grid>
+          </Grid>
+
+          <div
+            style={{
+              display: "flex",
+              justifyContent: "end",
+              paddingTop: "10px",
+            }}
+          >
+            <Button variant="contained" onClick={handleProfile}>
               save
             </Button>
-            </div>
+          </div>
+        </Box>
+      </Modal>
+      {/* modal1 end */}
 
-          </Box>
-        </Modal>
-      </div>
+      {/* modal2 start */}
+      <Modal
+        open={openabout}
+        onClose={handleCloseAbout}
+        aria-labelledby="modal-modal-title"
+        aria-describedby="modal-modal-description"
+      >
+        <Box sx={style}>
+          <div style={{ display: "flex", justifyContent: "end" }}>
+            <Button onClick={handleCloseAbout}>
+              <CloseIcon />
+            </Button>
+          </div>
+          <div style={{ display: "flex", justifyContent: "center" }}>
+            <Typography
+              id="modal-modal-title"
+              variant="h6"
+              component="h2"
+              color={"text.primary"}
+            >
+              Edit About
+            </Typography>
+          </div>
 
-      {/* modal end */}
+          <Grid container spacing={2}>
+            <Grid item xs={12}>
+              <TextField
+                id="standard-basic"
+                label="About"
+                variant="standard"
+                multiline
+                fullWidth
+                onChange={(e) => setAbout(e.target.value)}
+              ></TextField>
+            </Grid>
+          </Grid>
+
+          <div
+            style={{
+              display: "flex",
+              justifyContent: "end",
+              paddingTop: "10px",
+            }}
+          >
+            <Button variant="contained" onClick={handleAbout}>
+              save
+            </Button>
+          </div>
+        </Box>
+      </Modal>
+      {/* modal2 end */}
 
       <Box sx={{ marginLeft: "350px", paddingTop: "20px", width: "800px" }}>
-        {/* <img
-          style={{ width: "800px", height: "250px" }}
-          src={images}
-          alt=""
-        ></img> */}
         <div style={{ display: "flex", justifyContent: "center" }}>
           <div>
-            <Avatar src={userdata.pic} sx={{ width: 160, height: 160 }} />
+            <Button component="label">
+              <Avatar
+                src={userdata.pic}
+                sx={{ width: 160, height: 160, cursor: "pointer" }}
+              />
+              <input
+                type="file"
+                onChange={(e) => {
+                  imageUpload(e.target.files[0]);
+                }}
+                hidden
+              />
+            </Button>
+            {pic ? <Button onClick={submitPic}>submit</Button> : ""}
           </div>
         </div>
       </Box>
@@ -164,7 +315,7 @@ function Profile({ userdata , setUserUpdate,mode, setMode }) {
           marginLeft: "350px",
           width: "800px",
           height: "300px",
-          bgcolor: "white",
+          bgcolor: "background.default",
         }}
         variant="outlined"
       >
@@ -176,11 +327,10 @@ function Profile({ userdata , setUserUpdate,mode, setMode }) {
             justifyContent: "space-between",
           }}
         >
-          <div>
+          <Box>
             {/* <h1>{username}</h1> */}
             <h1>{userdata.name}</h1>
-
-          </div>
+          </Box>
           <div>
             <Button sx={{ cursor: "pointer" }} onClick={handleOpenProfile}>
               <EditIcon />
@@ -209,7 +359,7 @@ function Profile({ userdata , setUserUpdate,mode, setMode }) {
         <div style={{ display: "flex", justifyContent: "space-around" }}>
           <div
             style={{
-              backgroundColor: "#E9E5DF",
+              backgroundColor: "background.default",
               // marginLeft:'20px',
               marginTop: "20px",
               width: "350px",
@@ -225,7 +375,7 @@ function Profile({ userdata , setUserUpdate,mode, setMode }) {
           </div>
           <div
             style={{
-              backgroundColor: "#E9E5DF",
+              backgroundColor: "background.default",
               // marginLeft:'20px',
               marginTop: "20px",
               width: "350px",
@@ -247,7 +397,7 @@ function Profile({ userdata , setUserUpdate,mode, setMode }) {
           marginLeft: "350px",
           width: "800px",
           height: "100px",
-          bgcolor: "white",
+          bgcolor: "background.default",
         }}
       >
         <div
@@ -260,11 +410,7 @@ function Profile({ userdata , setUserUpdate,mode, setMode }) {
         >
           <div>
             <h3>About</h3>
-            <p>
-              I am self-taught MERN stack developer with experience in web
-              designing and web development. More enthusiastic in backend
-              development.
-            </p>
+            <p>{userdata.about} </p>
           </div>
           <div>
             <Button
@@ -285,7 +431,7 @@ function Profile({ userdata , setUserUpdate,mode, setMode }) {
           marginLeft: "350px",
           width: "800px",
           height: "100px",
-          bgcolor: "white",
+          bgcolor: "background.default",
         }}
       >
         <div
@@ -319,7 +465,7 @@ function Profile({ userdata , setUserUpdate,mode, setMode }) {
           marginLeft: "350px",
           width: "800px",
           height: "100px",
-          bgcolor: "white",
+          bgcolor: "background.default",
         }}
       >
         <div
@@ -354,7 +500,7 @@ function Profile({ userdata , setUserUpdate,mode, setMode }) {
           marginLeft: "350px",
           width: "800px",
           height: "100px",
-          bgcolor: "white",
+          bgcolor: "background.default",
         }}
       >
         <div
@@ -383,7 +529,7 @@ function Profile({ userdata , setUserUpdate,mode, setMode }) {
           </Button>
         </div>
       </Box>
-    </div>
+    </Box>
   );
 }
 

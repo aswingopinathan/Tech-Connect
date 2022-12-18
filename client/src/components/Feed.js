@@ -4,7 +4,6 @@ import Post from './Post'
 import axios from "axios";
 import {useEffect,useState} from 'react'
 import { UserContext } from '../context/Context';
-// import { getAllUsers } from '../api/UserRequest';
 
 
 function Feed() {
@@ -24,7 +23,6 @@ const [liked,setLiked] = useState(false);
       },
     };
     axios.get('/getpost',config).then((data)=>{
-      console.log(data);
       setPosts(data.data)
     })
      // eslint-disable-next-line

@@ -211,7 +211,7 @@ function Add() {
             variant="h6"
             color={"grey"}
             textAlign="center"
-            sx={{ color: "black" }}
+            sx={{ color: "text.primary" }}
           >
             Create post
           </Typography>

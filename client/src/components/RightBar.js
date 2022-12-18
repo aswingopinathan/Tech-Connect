@@ -1,41 +1,69 @@
 import { Box, ListItemText, Typography } from "@mui/material";
-import React, { useEffect, useState } from "react";
+import React, { useContext, useEffect, useState } from "react";
 import Avatar from "@mui/material/Avatar";
-import AvatarGroup from "@mui/material/AvatarGroup";
-// import ImageList from "@mui/material/ImageList";
-// import ImageListItem from "@mui/material/ImageListItem";
+// import AvatarGroup from "@mui/material/AvatarGroup";
 import ListItemAvatar from '@mui/material/ListItemAvatar';
 import ListItem from '@mui/material/ListItem';
 import Divider from '@mui/material/Divider';
 import List from '@mui/material/List';
 import { getAllUsers } from "../api/UserRequest";
+import axios from "axios";
+import { UserContext } from "../context/Context";
 
 function RightBar() {
 
-  // let userId = JSON.parse(localStorage.getItem("userInfo"))?._id;
 
 const [users,setUsers] = useState([])
 useEffect(()=>{
-  const allUsers= async ()=>{
-    try {
-      let { data } = await getAllUsers();
-      console.log("rightbar",data);
+  const userId = JSON.parse(localStorage.getItem("userInfo"))?._id;
 
-      // data = data.find((id)=> id !==userId)
-      // console.log('newdata',data);
+  const allUsers= async (userId)=>{
+    try {
+      let { data } = await getAllUsers(userId);
+      // console.log('rightbar',data);
       setUsers(data);
-  
     } catch (error) { 
       console.log(error);
     }
   }
-  allUsers();
+  allUsers(userId);
 },[])
 
+let userId = JSON.parse(localStorage.getItem("userInfo"))?._id;
+
+
+let token = JSON.parse(localStorage.getItem("userInfo"))?.token;
+
+const config = {
+  headers: {
+    "Content-Type": "application/json",
+    authorization: `Bearer ${token}`,
+  },
+};
+
+const { setTrigger } = useContext(UserContext);
+
+
+const connectUser = async (id) => {
+  await axios
+    .post(
+      "/connectuser",
+      {
+        userId: userId,
+        connectUserId: id,
+      },
+      config
+    )
+    .then(() => {
+      setTrigger(Math.random());
+
+    });
+};
+
   return (
-    <Box flex={2} p={2} sx={{ display: { xs: "none", sm: "none",md: "block" } }}>
-      <Box position="fixed" width={300}>
-        <Typography variant="h6" fontWeight={100}>
+    <Box flex={2} p={2} sx={{ display: { xs: "none", sm: "none",md: "block" }}} >
+      <Box position="fixed" width={300} paddingTop='1rem'>
+        {/* <Typography variant="h6" fontWeight={100}>
           Online Friends
         </Typography>
         <AvatarGroup max={5}>
@@ -67,44 +95,17 @@ useEffect(()=>{
             alt="Travis Howard"
             src="https://material-ui.com/static/images/avatar/7.jpg"
           />
-        </AvatarGroup>
-        {/* <Typography
-          variant="h6"
-          fontWeight={100}
-          marginTop={2}
-          marginBottom={2}
-        >
-          Upcoming Events
-        </Typography>
-        <ImageList cols={3} rowHeight={100}>
-          <ImageListItem>
-            <img
-              src="https://material-ui.com/static/images/image-list/breakfast.jpg"
-              alt=""
-            />
-          </ImageListItem>
-          <ImageListItem>
-            <img
-              src="https://material-ui.com/static/images/image-list/burgers.jpg"
-              alt=""
-            />
-          </ImageListItem>
-          <ImageListItem>
-            <img
-              src="https://material-ui.com/static/images/image-list/camera.jpg"
-              alt=""
-            />
-          </ImageListItem>
-        </ImageList> */}
+        </AvatarGroup> */}
+       
 
-        <Typography variant="h6" fontWeight={100} mt={2}>
+        <Typography variant="h6" fontWeight={100} mt={1}>
           People you may know
         </Typography>
         
-        <List sx={{ width: '100%', maxWidth: 360, bgcolor: 'background.paper' }}>
+        <List sx={{ width: '100%', maxWidth: 360, bgcolor: 'background.paper',borderRadius:'2rem', marginTop:'1rem' }}>
           
-        {users.map((usersall)=>(
-           <>
+        {users.map((usersall,index)=>(
+           <div key={index}>
           <ListItem alignItems="flex-start">
         <ListItemAvatar>
           <Avatar alt="Remy Sharp" src={usersall.pic} />
@@ -112,67 +113,31 @@ useEffect(()=>{
         <ListItemText
           primary={usersall.name}
           secondary={
-            <React.Fragment>
+            <div style={{display:'flex',justifyContent:'end'}}>
+              <div>
               <Typography
-                sx={{ display: 'inline' }}
+                sx={{ display: 'inline' ,cursor:'pointer'}}
                 component="span"
                 variant="body2"
                 color="text.primary"
+                onClick={()=>{
+                  console.log('connect in right clicked')
+                  console.log('usersall._id',usersall._id);
+                  connectUser(usersall._id)
+                  }}
               >
                 +Connect
               </Typography>
-              {/* {" — I'll be in your neighborhood doing errands this…"} */}
-            </React.Fragment>
+              </div>
+              
+            </div>
           }
         />
       </ListItem>
-      <Divider variant="inset" component="li" />
-          </>
+      <Divider variant="inset" component="li" sx={{width:"70%"}}/>
+          </div>
         ))}
 
-      {/* <ListItem alignItems="flex-start">
-        <ListItemAvatar>
-          <Avatar alt="Travis Howard" src="https://material-ui.com/static/images/avatar/2.jpg" />
-        </ListItemAvatar>
-        <ListItemText
-          primary="Summer BBQ"
-          secondary={
-            <React.Fragment>
-              <Typography
-                sx={{ display: 'inline' }}
-                component="span"
-                variant="body2"
-                color="text.primary"
-              >
-                to Scott, Alex, Jennifer
-              </Typography>
-              {" — Wish I could come, but I'm out of town this…"}
-            </React.Fragment>
-          }
-        />
-      </ListItem>
-      <Divider variant="inset" component="li" />
-      <ListItem alignItems="flex-start">
-        <ListItemAvatar>
-          <Avatar alt="Cindy Baker" src="https://material-ui.com/static/images/avatar/3.jpg" />
-        </ListItemAvatar>
-        <ListItemText
-          primary="Oui Oui"
-          secondary={
-            <React.Fragment>
-              <Typography
-                sx={{ display: 'inline' }}
-                component="span"
-                variant="body2"
-                color="text.primary"
-              >
-                Sandra Adams
-              </Typography>
-              {' — Do you have Paris recommendations? Have you ever…'}
-            </React.Fragment>
-          }
-        />
-      </ListItem> */}
     </List>
       </Box>
     </Box>

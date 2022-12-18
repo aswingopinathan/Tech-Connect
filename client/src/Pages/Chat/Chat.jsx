@@ -74,7 +74,6 @@ const checkOnlineStatus = (chat)=>{
             
             {/* Left side chat */}
             <div className="Left-side-chat">
-                
                 <div className='Chat-container'>
                 <h2>Chats</h2>
                 <div className="Chat-list">

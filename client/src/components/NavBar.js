@@ -30,7 +30,7 @@ const StyledToolbar = styled(Toolbar)({
 const Search = styled("div")(({ theme }) => ({
   backgroundColor: "white",
   padding: "0 10px",
-  borderRadius: "theme.shape.borderRadius",
+  borderradius: "theme.shape.borderradius",
   width: "40%",
 }));
 
@@ -56,14 +56,14 @@ function NavBar({ mode, setMode }) {
         // console.log('chatbox',userId);
         const { data } = await getUser(userId);
         setUserData(data.data);
-        console.log("navbar", data);
+        // console.log("navbar", data);
       } catch (error) { 
         console.log(error);
       }
     };
      getUserData();
   },[])
-  console.log('userData',userData);
+  // console.log('userData',userData);
 
   return (
     <AppBar position="sticky">
@@ -90,7 +90,7 @@ function NavBar({ mode, setMode }) {
             <InputBase
               placeholder="search... "
               sx={{ paddingLeft: "10px" }}
-              borderRadius="40px"
+              borderradius="40px"
             />
           )}
         </Search>

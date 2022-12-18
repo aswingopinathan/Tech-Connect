@@ -3,7 +3,7 @@ const io = require('socket.io')(8800,{
         origin:"http://localhost:3000"
     }
 })
-
+console.log('socket up and running');
 let activeUsers = []
 
 io.on("connection",(socket)=>{

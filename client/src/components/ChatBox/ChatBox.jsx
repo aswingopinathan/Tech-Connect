@@ -13,7 +13,7 @@ function ChatBox({ chat, currentUser,setSendMessage,receiveMessage }) {
 
   useEffect(()=>{
     if(receiveMessage!==null && receiveMessage.chatId === chat?._id){
-      console.log('Data received in child chatbox: ',receiveMessage);
+      // console.log('Data received in child chatbox: ',receiveMessage);
       setMessages([...messages,receiveMessage])
     }
   },[receiveMessage])
@@ -92,7 +92,7 @@ function ChatBox({ chat, currentUser,setSendMessage,receiveMessage }) {
                   src={userData?.pic}
                   alt=""
                   className="followerImage"
-                  style={{ width: "50px", height: "50px",borderRadius:'50%' }}
+                  style={{ width: "50px", height: "50px",borderradius:'50%' }}
                 />
 
                 <div className="name" style={{ fontSize: "0.8rem",display:'flex',alignItems:'center' }}>

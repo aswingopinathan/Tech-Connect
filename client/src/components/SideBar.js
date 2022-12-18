@@ -11,7 +11,7 @@ const navigate = useNavigate();
 
   return (
     <Box  flex={1} 
-    sx={{ display: { xs: "none",sm:"block" } }}>
+    sx={{ display: { xs: "none",sm:"block" },marginTop:'1rem' }}>
 
       <Box position={"fixed"}>
       <List>

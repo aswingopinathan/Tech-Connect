@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect } from "react";
 import {
   Avatar,
   Card,
@@ -9,8 +9,8 @@ import {
   CardMedia,
   IconButton,
   Typography,
-  Menu, 
-  MenuItem, 
+  Menu,
+  MenuItem,
 } from "@mui/material";
 import SendIcon from "@mui/icons-material/Send";
 import TextField from "@mui/material/TextField";
@@ -22,15 +22,28 @@ import CommentIcon from "@mui/icons-material/Comment";
 import axios from "axios";
 import { useState } from "react";
 import Collapse from "@mui/material/Collapse";
-import {format} from "timeago.js"
-
+import { format } from "timeago.js";
+import { getUser } from "../api/UserRequest";
 
 function Post({ post, setLiked }) {
-  const userData = JSON.parse(localStorage.getItem("userInfo"));
+  // const userData = JSON.parse(localStorage.getItem("userInfo"));
   let token = JSON.parse(localStorage.getItem("userInfo"))?.token;
-  let userId = JSON.parse(localStorage.getItem("userInfo"))?._id;
+  var userId = JSON.parse(localStorage.getItem("userInfo"))?._id;
 
-  console.log('postchecking',post.comments);
+  const [userData, setUserData] = useState("");
+  
+
+  useEffect(() => {
+    const getUserData = async () => {
+      try {
+        const { data } = await getUser(userId);
+        setUserData(data);
+      } catch (error) {
+        console.log(error);
+      }
+    };
+    getUserData();
+  }, []);
 
   const [anchorEl, setAnchorEl] = React.useState(null);
   const open = Boolean(anchorEl);
@@ -43,7 +56,6 @@ function Post({ post, setLiked }) {
 
   const [commentaction, setCommentAction] = useState(false);
   const [comment, setComment] = useState(false);
-  // const [reported,setReported] = useState(false)
 
   const config = {
     headers: {
@@ -150,10 +162,31 @@ function Post({ post, setLiked }) {
       .then(() => {
         setLiked(Math.random());
         setAnchorEl(!anchorEl);
+      });
+  };
 
+  const connectUser = async (id) => {
+    // console.log('connectuser working');
+    // console.log('id',id);
+    // console.log('userData._id',userData._id);
+    await axios
+      .post(
+        "/connectuser",
+        {
+          userId: userData._id,
+          connectUserId: id,
+        },
+        config
+      )
+      .then(() => {
+        setLiked(Math.random());
       });
   };
   // axios requests end
+
+  // console.log("checking",userData.connectionIds?.includes(post.userId._id));
+  // console.log('checking',post.userId._id);
+  // console.log('checking userData.connectionIds',userData.connectionIds);
 
   return (
     // main card post start
@@ -162,7 +195,7 @@ function Post({ post, setLiked }) {
         margin: 2,
         borderRadius: "2em",
         minWidth: "auto",
-        maxWidth: "800px",
+        maxWidth: "700px",
       }}
       variant="outlined"
     >
@@ -170,13 +203,19 @@ function Post({ post, setLiked }) {
         avatar={<Avatar aria-label="recipe" src={post?.userId.pic}></Avatar>}
         action={
           <>
-           {userId === post.userId._id?(""):(<Button
-              onClick={() => {
-                console.log("connect working"); 
-              }}
-            > 
-              + Connect
-            </Button>)}
+            {post.userId._id === userId ||
+            userData.connectionIds?.includes(post.userId._id) ? (
+              ""
+            ) : (
+              <Button
+                onClick={() => {
+                  // console.log("connect working");
+                  connectUser(post.userId._id);
+                }}
+              >
+                + Connect
+              </Button>
+            )}
             <IconButton aria-label="settings">
               <MoreVertIcon onClick={handleClick} />
               <Menu
@@ -223,7 +262,7 @@ function Post({ post, setLiked }) {
       {post.image ? (
         <CardMedia
           component="img"
-          sx={{ "object-fit": "contain" }}
+          sx={{ objectFit: "contain" }}
           width="800px"
           height="400px"
           src={post?.image}
@@ -236,7 +275,7 @@ function Post({ post, setLiked }) {
       {post.video ? (
         <video
           controls
-          style={{ "object-fit": "contain" }}
+          style={{ objectFit: "contain" }}
           width="800px"
           height="400px"
           src={post?.video}
@@ -288,7 +327,7 @@ function Post({ post, setLiked }) {
         in={commentaction}
         timeout="auto"
         unmountOnExit
-        sx={{ minHeight: "200px", maxHeight: "500px", overflowY: "scroll" }}
+        sx={{ minHeight: "200px", maxheight: "500px", overflowY: "scroll" }}
       >
         {/* comment card start */}
         <Card sx={{ margin: 5 }}>
@@ -297,8 +336,8 @@ function Post({ post, setLiked }) {
             title={userData.name}
             // subheader="September 14, 2022"
             // subheader={post?.date}
-            minHeight="40px"
-            maxHeight="80px"
+            minheight="40px"
+            maxheight="80px"
           />
           <CardContent>
             <TextField
@@ -309,10 +348,10 @@ function Post({ post, setLiked }) {
               placeholder="Add a comment...."
               variant="outlined"
               onChange={(e) => {
-                if(e.target.value.match(/^[A-Za-z]+$/) ){
-                setComment(e.target.value);
-                }else{
-                setComment("");
+                if (e.target.value.match(/^[A-Za-z]+$/)) {
+                  setComment(e.target.value);
+                } else {
+                  setComment("");
                 }
               }}
             />
@@ -335,37 +374,45 @@ function Post({ post, setLiked }) {
         {/* comment card end */}
 
         {/* db card start*/}
-        {post.comments.map((allcomment) => (
-          <Card sx={{ margin: 5 }} >
+        {post.comments.map((allcomment, index) => (
+          <Card sx={{ margin: 5 }} key={index}>
             <CardHeader
               avatar={
                 <Avatar aria-label="recipe" src={allcomment.pic}></Avatar>
               }
               action={
                 <IconButton aria-label="settings">
-              {allcomment.userId===userId?<MoreVertIcon onClick={handleClick} />:""}
-              <Menu
-                id="basic-menu"
-                anchorEl={anchorEl}
-                open={open}
-                onClose={handleClose}
-                MenuListProps={{
-                  "aria-labelledby": "basic-button",
-                }}
-              >
-               <MenuItem onClick={handleClose}>Edit</MenuItem>
-                    <MenuItem onClick={()=>{
-                      // removecomment(allcomment._id)
-                    console.log(allcomment._id);}}>Delete</MenuItem>
-              </Menu>
-            </IconButton>
+                  {allcomment.userId === userId ? (
+                    <MoreVertIcon onClick={handleClick} />
+                  ) : (
+                    ""
+                  )}
+                  <Menu
+                    id="basic-menu"
+                    anchorEl={anchorEl}
+                    open={open}
+                    onClose={handleClose}
+                    MenuListProps={{
+                      "aria-labelledby": "basic-button",
+                    }}
+                  >
+                    <MenuItem onClick={handleClose}>Edit</MenuItem>
+                    <MenuItem
+                      onClick={() => {
+                        // removecomment(allcomment._id)
+                        console.log(allcomment._id);
+                      }}
+                    >
+                      Delete
+                    </MenuItem>
+                  </Menu>
+                </IconButton>
               }
               title={allcomment.name}
               // subheader="September 14, 2022"
               subheader={format(allcomment.date)}
-              // juku{}
-              minHeight="40px"
-              maxHeight="80px"
+              minheight="40px"
+              maxheight="80px"
             />
 
             <CardContent>

@@ -11,5 +11,5 @@ API.interceptors.request.use((req) => {
   });
 
 export const getUser = (userId) => API.get(`/user/${userId}`);
-export const getAllUsers = () => API.get("/getallusers");
+export const getAllUsers = (userId) => API.get(`/getsuggestions/${userId}`);
 

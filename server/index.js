@@ -10,6 +10,8 @@ const MessageRoute=require("./routes/MessageRoute");
 const { notFound, errorHandler } = require("./middlewares/errorMiddleware");
 const cors = require("cors");
 
+const morgan = require('morgan')
+
 
 dotenv.config();
 connectDB();
@@ -17,6 +19,7 @@ connectDB();
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));  
 app.use(cors());
+app.use(morgan(':method:status:url'))
 
 //routing
 app.use("/",userRoutes); 
