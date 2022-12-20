@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useContext } from 'react'
 import NavBar from '../../components/NavBar'
 import "./Chat.css";
 // import "./index.css";
@@ -8,8 +8,10 @@ import Conversation from '../../components/Conversation/Conversation';
 import ChatBox from '../../components/ChatBox/ChatBox';
 import {io} from 'socket.io-client'
 import { useRef } from 'react';
+import { UserContext } from '../../context/Context';
 
 function Chat() {
+    const{notifications, setNotifications}=useContext(UserContext)
 
   const userData = JSON.parse(localStorage.getItem("userInfo"));
 
@@ -18,6 +20,7 @@ function Chat() {
     const [onlineUsers,setOnlineUsers] = useState([])
     const [sendMessage,setSendMessage] = useState(null)
     const [receiveMessage,setReceiveMessage] = useState(null)
+    const [fetchAgain,setFetchAgain] = useState(false);
 
 
     const socket = useRef()
@@ -61,6 +64,7 @@ function Chat() {
         getChats()
     },[])
 // dependency missing
+console.log('notifications',notifications);
 
 const checkOnlineStatus = (chat)=>{
     const chatMember = chat.members.find((member)=> member!==userData._id)
@@ -91,7 +95,7 @@ const checkOnlineStatus = (chat)=>{
             <div className="Right-side-chat">
                 {/* Right side */}
                 <ChatBox chat={currentChat} currentUser={userData._id} setSendMessage={setSendMessage}
-                receiveMessage={receiveMessage}/>
+                receiveMessage={receiveMessage} setNotifications={setNotifications} notifications={notifications}/>
             </div>
         </div>
     </>

@@ -8,7 +8,7 @@ import { Stack } from "@mui/system";
 import NavBar from "../../components/NavBar";
 import Add from "../../components/Add";
 import { createTheme, ThemeProvider } from "@mui/material";
-import { getUser } from "../../api/UserRequest";
+// import { getUser } from "../../api/UserRequest";
 
 function UserPage() {
 
@@ -19,22 +19,6 @@ const darkTheme=createTheme({
   }
 })
 
-
-const [userData, setUserData] = useState("");
-
-useEffect(() => {
-  let userId = JSON.parse(localStorage.getItem("userInfo"))?._id;
-  const getUserData = async () => {
-    try {
-      const { data } = await getUser(userId);
-      setUserData(data);
-    } catch (error) {
-      console.log(error);
-    }
-  };
-  getUserData();
-}, []);
-
   return (
     
       <ThemeProvider theme={darkTheme}>
@@ -44,7 +28,7 @@ useEffect(() => {
         
       <SideBar setMode={setMode} mode={mode}/>
       <Feed/>
-      <RightBar userData={userData}/>
+      <RightBar/>
 
       </Stack>
 
@@ -56,7 +40,7 @@ useEffect(() => {
         
       <SideBar setMode={setMode} mode={mode}/>
       <Feed/>
-      <RightBar userData={userData}/>
+      <RightBar/>
 
       </Stack>
 

@@ -1,11 +1,15 @@
-import React, { useEffect, useRef, useState } from "react";
+import React, { useContext, useEffect, useRef, useState } from "react";
 import { addMessage, getMessages } from "../../api/MessageRequest";
 import { getUser } from "../../api/UserRequest";
 import "./ChatBox.css"
 import {format} from "timeago.js"
 import InputEmoji from 'react-input-emoji'
+import { Button } from "@mui/material";
 
-function ChatBox({ chat, currentUser,setSendMessage,receiveMessage }) {
+
+function ChatBox({ chat, currentUser,setSendMessage,receiveMessage ,notifications,setNotifications}) {
+
+
   const [userData, setUserData] = useState(null);
   const [messages, setMessages] = useState([]);
   const [newMessage, setNewMessage] = useState("")
@@ -13,9 +17,18 @@ function ChatBox({ chat, currentUser,setSendMessage,receiveMessage }) {
 
   useEffect(()=>{
     if(receiveMessage!==null && receiveMessage.chatId === chat?._id){
-      // console.log('Data received in child chatbox: ',receiveMessage);
       setMessages([...messages,receiveMessage])
+    }else{
+        setNotifications([chat,...notifications])
+        // setFetchAgain(!fetchAgain)
+
     }
+    // if(!receiveMessage.chatId || receiveMessage.chatId !==chat?._id ){
+    //   if(!notifications.includes(receiveMessage)){
+    //     setNotifications([receiveMessage,...notifications])
+    //     setFetchAgain(!fetchAgain)
+    //   }
+    // }
   },[receiveMessage])
 
 // fetching data for header
@@ -122,7 +135,12 @@ function ChatBox({ chat, currentUser,setSendMessage,receiveMessage }) {
             value={newMessage}
             onChange={handleChange}
             />
-            <div className="send-button" onClick={handleSend}>Send</div>
+            {/* <div className="send-button" onClick={handleSend}>Send</div> */}
+            <Button 
+            variant="contained"
+            // sx={{bgcolor:'grey',color:'white'}} 
+            onClick={handleSend}>Send</Button>
+
         </div>
         </>):(<span className="chatbox-empty-message">
             Tap on a chat to start conversation...</span>)}

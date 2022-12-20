@@ -24,8 +24,11 @@ import { useState } from "react";
 import Collapse from "@mui/material/Collapse";
 import { format } from "timeago.js";
 import { getUser } from "../api/UserRequest";
+import { Link, useNavigate } from "react-router-dom";
 
 function Post({ post, setLiked }) {
+  const navigate = useNavigate();
+
   // const userData = JSON.parse(localStorage.getItem("userInfo"));
   let token = JSON.parse(localStorage.getItem("userInfo"))?.token;
   var userId = JSON.parse(localStorage.getItem("userInfo"))?._id;
@@ -148,14 +151,18 @@ function Post({ post, setLiked }) {
       });
   };
 
-  const removecomment = async (id) => {
+  const removecomment = async (postCommentId,postUserId,postId) => {
+    console.log('userId',postUserId);
+    console.log('postId',postId);
+    console.log('commentId',postCommentId);
+ 
     await axios
       .post(
         "/removecomment",
         {
-          userId: userData._id,
-          postId: post._id,
-          commentId: id,
+          userId: postUserId,
+          postId: postId,
+          commentId: postCommentId,
         },
         config
       )
@@ -182,12 +189,25 @@ function Post({ post, setLiked }) {
         setLiked(Math.random());
       });
   };
-  // axios requests end
+ 
 
-  // console.log("checking",userData.connectionIds?.includes(post.userId._id));
-  // console.log('checking',post.userId._id);
-  // console.log('checking userData.connectionIds',userData.connectionIds);
+  
+  const chatCreator = async (id) => {
+    await axios
+    .post(
+      "/chat",
+      {
+        senderId: userId,
+        receiverId: id,
+      },
+      config
+    )
+    };
 
+
+     // axios requests end
+
+// console.log('incoming post',post);
   return (
     // main card post start
     <Card
@@ -200,7 +220,18 @@ function Post({ post, setLiked }) {
       variant="outlined"
     >
       <CardHeader
-        avatar={<Avatar aria-label="recipe" src={post?.userId.pic}></Avatar>}
+        avatar={post.userId._id === userId?(<Avatar
+           aria-label="recipe"
+            src={post?.userId.pic}
+            sx={{cursor:"pointer"}}
+            onClick={()=>{
+              console.log('sameuser');
+              navigate('/profile')
+            }}
+            ></Avatar>):(<Link to='/viewprofile' state={{ userId: post.userId._id}}>
+            <Avatar aria-label="recipe" src={post?.userId.pic}></Avatar>
+            </Link>
+            )}
         action={
           <>
             {post.userId._id === userId ||
@@ -211,6 +242,7 @@ function Post({ post, setLiked }) {
                 onClick={() => {
                   // console.log("connect working");
                   connectUser(post.userId._id);
+                  chatCreator(post.userId._id)
                 }}
               >
                 + Connect
@@ -327,7 +359,12 @@ function Post({ post, setLiked }) {
         in={commentaction}
         timeout="auto"
         unmountOnExit
-        sx={{ minHeight: "200px", maxheight: "500px", overflowY: "scroll" }}
+        sx={{ minHeight: "200px",
+         maxHeight: "400px",
+        //  scrollbar: {
+        //   display: 'none'
+        // },
+          overflowY: "scroll" }}
       >
         {/* comment card start */}
         <Card sx={{ margin: 5 }}>
@@ -399,8 +436,10 @@ function Post({ post, setLiked }) {
                     <MenuItem onClick={handleClose}>Edit</MenuItem>
                     <MenuItem
                       onClick={() => {
-                        // removecomment(allcomment._id)
-                        console.log(allcomment._id);
+                        // console.log('allcomment._id',allcomment._id);
+                        // console.log('post.userId._id',post.userId._id);
+                        // console.log('post._id',post._id);
+                        removecomment(allcomment._id,post.userId._id,post._id)
                       }}
                     >
                       Delete

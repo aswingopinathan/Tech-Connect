@@ -6,9 +6,11 @@ import axios from "axios";
 import { useEffect, useState } from "react";
 import { createTheme, Stack, ThemeProvider } from "@mui/material";
 import { Box } from "@mui/system";
+import { useLocation } from "react-router-dom";
+import ViewProfile from "../../components/ViewProfile";
 
-function ProfilePage() {
-
+function ViewProfilePage() {
+const location = useLocation()
   const [mode, setMode] = useState("light");
   const darkTheme = createTheme({
     palette: {
@@ -17,11 +19,12 @@ function ProfilePage() {
   });
 
   let token = JSON.parse(localStorage.getItem("userInfo"))?.token;
-  let userId = JSON.parse(localStorage.getItem("userInfo"))?._id;
+//   let userId = JSON.parse(localStorage.getItem("userInfo"))?._id;
 
-  const [userupdate, setUserUpdate] = useState(false);
+//   const [userupdate, setUserUpdate] = useState(false);
   const [userdata, setUserData] = useState("");
-  console.log("userId", userId);
+  const [connectUpdate,setConnectUpdate] = useState(false)
+//   console.log("userId", userId);
 
   useEffect(() => {
     const config = {
@@ -33,7 +36,7 @@ function ProfilePage() {
 
     axios
       .get(
-        `/finduser?userId=${userId}`,
+        `/finduser?userId=${location.state.userId}`,
         config
       )
       .then((data) => {
@@ -41,24 +44,24 @@ function ProfilePage() {
         setUserData(data.data[0]);
       });
 
-  }, [userupdate]);
+  }, [connectUpdate]);
   return (
     <ThemeProvider theme={darkTheme}>
       {mode === "light" ? (<Box bgcolor={"#e6e1e1"} color={"text.primary"}>
       <Stack justifyContent="space-between">
         <NavBar setMode={setMode} mode={mode} />
         <SideBar setMode={setMode} mode={mode} />
-        <Profile userdata={userdata} setUserUpdate={setUserUpdate} />
+        <ViewProfile userdata={userdata} setConnectUpdate={setConnectUpdate} />
       </Stack>
       </Box>):(<Box bgcolor={"black"} color={"text.primary"}>
       <Stack justifyContent="space-between">
         <NavBar setMode={setMode} mode={mode} />
         <SideBar setMode={setMode} mode={mode} />
-        <Profile userdata={userdata} setUserUpdate={setUserUpdate} />
-      </Stack>
+        <ViewProfile userdata={userdata}  setConnectUpdate={setConnectUpdate}/>
+      </Stack> 
       </Box>)}
     </ThemeProvider>
   );
 }
 
-export default ProfilePage;
+export default ViewProfilePage;

@@ -16,14 +16,6 @@ const navigate = useNavigate();
       <Box position={"fixed"}>
       <List>
         
-          <ListItem disablePadding>
-            <ListItemButton component="a" href="#">
-              <ListItemIcon>
-                <PeopleIcon/>
-              </ListItemIcon>
-              <ListItemText primary="Connections" />
-            </ListItemButton>
-          </ListItem>
 
           <ListItem disablePadding>
             <ListItemButton >

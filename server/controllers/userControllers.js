@@ -275,17 +275,35 @@ module.exports = {
     }
   }),
 
+  // removeComment: asyncHandler(async (req, res) => {
+  //   console.log("removeComment working");
+  //   try {
+  //     const { postId, userId, commentId } = req.body;
+  //     console.log('commentId',commentId);
+  //     Post.updateOne(
+  //       { _id: postId, "comments._id": { $eq: new ObjectId(commentId) } },
+  //       { $pull: { comments: { _id: new ObjectId(commentId) } } }
+  //     ).then((data) => {
+  //       console.log("removeComment working");
+  //       // console.log(data);
+  //       res.status(200).json(data);
+  //     });
+  //   } catch (error) {
+  //     console.log(error);
+  //     res.status(500).json(error)
+  //   }
+  // }),
+
   removeComment: asyncHandler(async (req, res) => {
-    // console.log("removeComment working");
+    console.log("removeComment1 working");
     try {
       const { postId, userId, commentId } = req.body;
       console.log('commentId',commentId);
       Post.updateOne(
-        { _id: postId, "comments._id": { $eq: new ObjectId(commentId) } },
-        { $pull: { comments: { _id: new ObjectId(commentId) } } }
+        { _id: postId , "comments.userId":{$eq:userId} },{ $pull: { comments: { _id: commentId} } }
       ).then((data) => {
-        console.log("removeComment working");
-        // console.log(data);
+        console.log("removeComment2 working");
+        console.log(data);
         res.status(200).json(data);
       });
     } catch (error) {
@@ -362,16 +380,35 @@ let userId = req.params.id
     }
   }),
 
-  connectUser: asyncHandler(async (req, res) => {
+  connectUser1: asyncHandler(async (req, res,next) => {
     try {
       const { userId, connectUserId } = req.body;
-      User.updateOne({ _id: userId }, { $push: { connectionIds: connectUserId } }).then(
+      User.updateOne({ _id: userId }, { $push: { connectionIds: connectUserId } })
+      .then(
         (data) => {
-          console.log("connectUser working");
+          console.log("connectUser1 working");
+          console.log(data);
+          next()
+          // res.status(200).json(data);
+        }
+      );
+    } catch (error) {
+      console.log(error);
+      res.status(500).json(error)
+    }
+  }),
+
+  connectUser2: asyncHandler(async (req, res) => {
+    try {
+      const { userId, connectUserId } = req.body;
+      User.updateOne({ _id: connectUserId }, { $push: { connectionIds: userId } }) 
+      .then(
+        (data) => {
+          console.log("connectUser2 working");
           console.log(data);
           res.status(200).json(data);
         }
-      );
+      ); 
     } catch (error) {
       console.log(error);
       res.status(500).json(error)
@@ -404,6 +441,66 @@ let userId = req.params.id
         } 
       ).then((data) => {
         console.log('editAbout successfull');
+        res.status(200).json(data);
+      });
+    } catch (error) {
+      console.log(error);
+      res.status(500).json(error)
+    }
+  }),
+
+  editExperience: asyncHandler(async (req, res) => {
+    try {
+      const { userId,experience } = req.body;
+      User.updateOne(
+        { _id: userId },
+        {
+          $set: {
+            experience: experience,
+          },
+        } 
+      ).then((data) => {
+        console.log('editExperience successfull');
+        res.status(200).json(data);
+      });
+    } catch (error) {
+      console.log(error);
+      res.status(500).json(error)
+    }
+  }),
+
+  editEducation: asyncHandler(async (req, res) => {
+    try {
+      const { userId,education } = req.body;
+      User.updateOne(
+        { _id: userId },
+        {
+          $set: {
+            education: education,
+          },
+        } 
+      ).then((data) => {
+        console.log('editEducation successfull');
+        res.status(200).json(data);
+      });
+    } catch (error) {
+      console.log(error);
+      res.status(500).json(error)
+    }
+  }),
+
+  editSkills: asyncHandler(async (req, res) => {
+    try {
+      const { userId,skills } = req.body;
+      User.updateOne(
+        { _id: userId },
+        {
+          $set: {
+            skills: skills,
+          },
+        } 
+      ).then((data) => {
+        console.log('editSkills successfull');
         res.status(200).json(data);
       });
     } catch (error) {

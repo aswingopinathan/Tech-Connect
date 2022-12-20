@@ -10,7 +10,7 @@ import {
   Toolbar,
   Typography,
 } from "@mui/material";
-import React, { useEffect } from "react";
+import React, { useContext, useEffect } from "react";
 import ConnectWithoutContactIcon from "@mui/icons-material/ConnectWithoutContact";
 import Mail from "@mui/icons-material/Mail";
 import Notifications from "@mui/icons-material/Notifications";
@@ -21,6 +21,8 @@ import PeopleIcon from "@mui/icons-material/People";
 import WorkIcon from "@mui/icons-material/Work";
 import SearchIcon from '@mui/icons-material/Search';
 import { getUser } from "../api/UserRequest";
+import { UserContext } from '../context/Context';
+import Button from '@mui/material/Button';
 
 const StyledToolbar = styled(Toolbar)({
   display: "flex",
@@ -41,6 +43,7 @@ const Icons = styled(Box)(({ theme }) => ({
 }));
 
 function NavBar({ mode, setMode }) {
+  const{notifications, setNotifications}=useContext(UserContext)
 
   const [open, setOpen] = useState(false);
   const [userData, setUserData] = useState(null);
@@ -65,6 +68,14 @@ function NavBar({ mode, setMode }) {
   },[])
   // console.log('userData',userData);
 
+  const [anchorEl, setAnchorEl] = React.useState(null);
+  const newopen = Boolean(anchorEl);
+  const handleClick = (event) => {
+    setAnchorEl(event.currentTarget);
+  };
+  const handleClose = () => {
+    setAnchorEl(null);
+  };
   return (
     <AppBar position="sticky">
       <StyledToolbar>
@@ -106,7 +117,7 @@ function NavBar({ mode, setMode }) {
             <HomeIcon />
           </Badge>
 
-          <Badge badgeContent={2}
+          {/* <Badge badgeContent={2}
           color="error"
           sx={{ cursor: "pointer" }}
             onClick={(e) => {
@@ -114,11 +125,11 @@ function NavBar({ mode, setMode }) {
             }}
           >
             <PeopleIcon />
-          </Badge>
+          </Badge> */}
 
-          <Badge>
+          {/* <Badge>
             <WorkIcon />
-          </Badge>
+          </Badge> */}
 
           <Badge badgeContent={4}
            color="error"
@@ -129,9 +140,45 @@ function NavBar({ mode, setMode }) {
             <Mail />
           </Badge>
 
-          <Badge badgeContent={4} color="error">
+
+          {/* <Badge badgeContent={1} color="error">
             <Notifications />
+          </Badge> */}
+          <>
+          <Button
+        id="basic-button"
+        aria-controls={newopen ? 'basic-menu' : undefined}
+        aria-haspopup="true"
+        aria-expanded={newopen ? 'true' : undefined}
+        onClick={handleClick}
+      >
+        {/* Dashboard */}
+        <Badge badgeContent={1} color="error">
+            <Notifications color="error"/>
           </Badge>
+
+      </Button>
+      <Menu
+        id="basic-menu"
+        anchorEl={anchorEl}
+        open={newopen}
+        onClose={handleClose}
+        MenuListProps={{
+          'aria-labelledby': 'basic-button',
+        }}
+      >
+        <MenuItem onClick={handleClose}>
+          {/* Profile */}
+          {!notifications.length && "No new messages" }
+          </MenuItem>
+        
+      </Menu></>
+          {/* <Menu>
+            <MenuItem>
+            {!notifications.length && "No new messages" }
+            </MenuItem>
+          </Menu> */}
+
           <span>{userName}</span>
 
           <Avatar

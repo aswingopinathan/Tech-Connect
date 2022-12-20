@@ -10,6 +10,7 @@ import UnauthRoutes from "../ProtectedRoutes/UnauthRoutes";
 import OtpPage from "../Pages/Client/OtpPage";
 import ProfilePage from "../Pages/Client/ProfilePage";
 import ChatPage from "../Pages/Chat/Chat"
+import ViewProfilePage from "../Pages/Client/ViewProfilePage";
 
 function UserRoutes() {
   return (
@@ -28,8 +29,9 @@ function UserRoutes() {
           <Route element={<AuthRoutes />}>
             <Route path="/user" element={<UserPage />} />
             <Route path="/profile" element={<ProfilePage />} />
-            <Route path="/chat" element={<ChatPage />} />
+            <Route path="/viewprofile" element={<ViewProfilePage />} />
 
+            <Route path="/chat" element={<ChatPage />} />
 
           </Route>
         </Routes>

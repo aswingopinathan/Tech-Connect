@@ -31,17 +31,27 @@ function Profile({ userdata, setUserUpdate, mode, setMode }) {
   const [openprofile, setOpenProfile] = useState(false);
   const handleOpenProfile = () => setOpenProfile(true);
   const handleCloseProfile = () => setOpenProfile(false);
-
   const [name, setName] = useState("");
   const [jobstatus, setJobStatus] = useState("");
   const [currentposition, setCurrentPosition] = useState("");
   const [place, setPlace] = useState("");
 
   const [openabout, setOpenAbout] = useState(false);
-  const handleOpenAbout = () => setOpenAbout(true);
+  // const handleOpenAbout = () => setOpenAbout(true);
   const handleCloseAbout = () => setOpenAbout(false);
-
   const [about, setAbout] = useState("");
+
+  const [openexperience, setOpenExperience] = useState(false);
+  const handleCloseExperience = () => setOpenExperience(false);
+  const [experience, setExperience] = useState("");
+
+  const [openeducation, setOpenEducation] = useState(false);
+  const handleCloseEducation = () => setOpenEducation(false);
+  const [education, setEducation] = useState("");
+
+  const [openskills, setOpenSkills] = useState(false);
+  const handleCloseSkills = () => setOpenSkills(false);
+  const [skills, setSkills] = useState("");
 
   let userId = JSON.parse(localStorage.getItem("userInfo"))?._id;
   let token = JSON.parse(localStorage.getItem("userInfo"))?.token;
@@ -87,6 +97,60 @@ function Profile({ userdata, setUserUpdate, mode, setMode }) {
       .then(() => { 
         console.log('editAbout successfull');
         setOpenAbout(false);
+        setUserUpdate(Math.random());
+      });
+  };
+
+  const handleExperience = async () => {
+    console.log("handleExperience working");
+    await axios
+      .post(
+        "/editexperience",
+        {
+          userId: userId,
+          experience: experience,
+        },
+        config
+      )
+      .then(() => { 
+        console.log('editexperience successfull');
+        setOpenExperience(false);
+        setUserUpdate(Math.random());
+      });
+  };
+
+  const handleEducation = async () => {
+    console.log("handleEducation working");
+    await axios
+      .post(
+        "/editeducation",
+        {
+          userId: userId,
+          education: education,
+        },
+        config
+      )
+      .then(() => { 
+        console.log('editeducation successfull');
+        setOpenEducation(false);
+        setUserUpdate(Math.random());
+      });
+  };
+
+  const handleSkills = async () => {
+    console.log("handleSkills working");
+    await axios
+      .post(
+        "/editskills",
+        {
+          userId: userId,
+          skills: skills,
+        },
+        config
+      )
+      .then(() => { 
+        console.log('editskills successfull');
+        setOpenSkills(false);
         setUserUpdate(Math.random());
       });
   };
@@ -264,11 +328,14 @@ function Profile({ userdata, setUserUpdate, mode, setMode }) {
           <Grid container spacing={2}>
             <Grid item xs={12}>
               <TextField
-                id="standard-basic"
+                id="standard-basic" 
                 label="About"
                 variant="standard"
+                value={about}
+  // about=userdata.about
                 multiline
                 fullWidth
+                required
                 onChange={(e) => setAbout(e.target.value)}
               ></TextField>
             </Grid>
@@ -280,7 +347,7 @@ function Profile({ userdata, setUserUpdate, mode, setMode }) {
               justifyContent: "end",
               paddingTop: "10px",
             }}
-          >
+            >
             <Button variant="contained" onClick={handleAbout}>
               save
             </Button>
@@ -288,6 +355,168 @@ function Profile({ userdata, setUserUpdate, mode, setMode }) {
         </Box>
       </Modal>
       {/* modal2 end */}
+
+      {/* modal3 start */}
+      <Modal
+        open={openexperience}
+        onClose={handleCloseExperience}
+        aria-labelledby="modal-modal-title"
+        aria-describedby="modal-modal-description"
+      >
+        <Box sx={style}>
+          <div style={{ display: "flex", justifyContent: "end" }}>
+            <Button onClick={handleCloseExperience}>
+              <CloseIcon />
+            </Button>
+          </div>
+          <div style={{ display: "flex", justifyContent: "center" }}>
+            <Typography
+              id="modal-modal-title"
+              variant="h6"
+              component="h2"
+              color={"text.primary"}
+            >
+              Edit Experience
+            </Typography>
+          </div>
+
+          <Grid container spacing={2}>
+            <Grid item xs={12}>
+              <TextField
+                id="standard-basic" 
+                label="Experience"
+                variant="standard"
+                // value={userdata.about}
+                // multiline
+                fullWidth
+                required
+                onChange={(e) => setExperience(e.target.value)}
+              ></TextField>
+            </Grid>
+          </Grid>
+
+          <div
+            style={{
+              display: "flex",
+              justifyContent: "end",
+              paddingTop: "10px",
+            }}
+            >
+            <Button variant="contained" onClick={handleExperience}>
+              save
+            </Button>
+          </div>
+        </Box>
+      </Modal>
+      {/* modal3 end */}
+
+      {/* modal4 start */}
+      <Modal
+        open={openeducation}
+        onClose={handleCloseEducation}
+        aria-labelledby="modal-modal-title"
+        aria-describedby="modal-modal-description"
+      >
+        <Box sx={style}>
+          <div style={{ display: "flex", justifyContent: "end" }}>
+            <Button onClick={handleCloseEducation}>
+              <CloseIcon />
+            </Button>
+          </div>
+          <div style={{ display: "flex", justifyContent: "center" }}>
+            <Typography
+              id="modal-modal-title"
+              variant="h6"
+              component="h2"
+              color={"text.primary"}
+            >
+              Edit Education
+            </Typography>
+          </div>
+
+          <Grid container spacing={2}>
+            <Grid item xs={12}>
+              <TextField
+                id="standard-basic" 
+                label="Education"
+                variant="standard"
+                // value={userdata.about}
+                // multiline
+                fullWidth
+                required
+                onChange={(e) => setEducation(e.target.value)}
+              ></TextField>
+            </Grid>
+          </Grid>
+
+          <div
+            style={{
+              display: "flex",
+              justifyContent: "end",
+              paddingTop: "10px",
+            }}
+            >
+            <Button variant="contained" onClick={handleEducation}>
+              save
+            </Button>
+          </div>
+        </Box>
+      </Modal>
+      {/* modal4 end */}
+
+      {/* modal5 start */}
+      <Modal
+        open={openskills}
+        onClose={handleCloseSkills}
+        aria-labelledby="modal-modal-title"
+        aria-describedby="modal-modal-description"
+      >
+        <Box sx={style}>
+          <div style={{ display: "flex", justifyContent: "end" }}>
+            <Button onClick={handleCloseSkills}>
+              <CloseIcon />
+            </Button>
+          </div>
+          <div style={{ display: "flex", justifyContent: "center" }}>
+            <Typography
+              id="modal-modal-title"
+              variant="h6"
+              component="h2"
+              color={"text.primary"}
+            >
+              Edit Skills
+            </Typography>
+          </div>
+
+          <Grid container spacing={2}>
+            <Grid item xs={12}>
+              <TextField
+                id="standard-basic" 
+                label="Skills"
+                variant="standard"
+                // value={userdata.about}
+                // multiline
+                fullWidth
+                required
+                onChange={(e) => setSkills(e.target.value)}
+              ></TextField>
+            </Grid>
+          </Grid>
+
+          <div
+            style={{
+              display: "flex",
+              justifyContent: "end",
+              paddingTop: "10px",
+            }}
+            >
+            <Button variant="contained" onClick={handleSkills}>
+              save
+            </Button>
+          </div>
+        </Box>
+      </Modal>
+      {/* modal5 end */}
 
       <Box sx={{ marginLeft: "350px", paddingTop: "20px", width: "800px" }}>
         <div style={{ display: "flex", justifyContent: "center" }}>
@@ -329,7 +558,7 @@ function Profile({ userdata, setUserUpdate, mode, setMode }) {
         >
           <Box>
             {/* <h1>{username}</h1> */}
-            <h1>{userdata.name}</h1>
+            <h1>{userdata?.name}</h1>
           </Box>
           <div>
             <Button sx={{ cursor: "pointer" }} onClick={handleOpenProfile}>
@@ -339,44 +568,34 @@ function Profile({ userdata, setUserUpdate, mode, setMode }) {
         </div>
 
         <div style={{ marginTop: "10px", marginLeft: "20px" }}>
-          <h3>{userdata.jobPosition}</h3>
+          <h3>{userdata?.jobPosition}</h3>
         </div>
 
         <div style={{ marginTop: "10px", marginLeft: "20px" }}>
-          <h4>{userdata.place}</h4>
+          <h4>{userdata?.place}</h4>
         </div>
 
-        <div style={{ marginTop: "20px", marginLeft: "20px" }}>
-          <span>500 Connections</span>
+        <div style={{ marginTop: "20px", marginLeft: "20px" }} >
+          <span>{userdata && userdata?.connectionIds.length} connections</span>
         </div>
-
-        {/* <div style={{ marginTop: "10px",marginLeft:'20px' }}>
-          <Button variant="contained">Open to</Button>
-          <Button variant="outlined" sx={{marginLeft:'20px'}}>Add Profile Section</Button>
-          <Button variant="outlined" sx={{marginLeft:'20px',color:'grey'}}>More</Button>
-        </div> */}
 
         <div style={{ display: "flex", justifyContent: "space-around" }}>
           <div
             style={{
               backgroundColor: "background.default",
-              // marginLeft:'20px',
               marginTop: "20px",
               width: "350px",
               height: "80px",
             }}
           >
             <div style={{ margin: "10px" }}>
-              <p>
-                <strong>{userdata.jobStatus}</strong>
-              </p>
-              <p>Software Developer roles</p>
+              <p><strong>Job status</strong></p>
+              <p>{userdata?.jobStatus}</p>
             </div>
           </div>
           <div
             style={{
               backgroundColor: "background.default",
-              // marginLeft:'20px',
               marginTop: "20px",
               width: "350px",
               height: "80px",
@@ -410,13 +629,15 @@ function Profile({ userdata, setUserUpdate, mode, setMode }) {
         >
           <div>
             <h3>About</h3>
-            <p>{userdata.about} </p>
+            <p>{userdata?.about} </p>
           </div>
           <div>
             <Button
               sx={{ cursor: "pointer" }}
               onClick={() => {
-                console.log("edit button clicked");
+                console.log('userdata.about',userdata.about);
+                setAbout(userdata.about)
+                //
                 setOpenAbout(true);
               }}
             >
@@ -445,7 +666,7 @@ function Profile({ userdata, setUserUpdate, mode, setMode }) {
           <div>
             <h3>Experience</h3>
             <ul>
-              <li>MERN stack developer trainee</li>
+              <li>{userdata?.experience}</li>
               <li>Network Engineer</li>
             </ul>
           </div>
@@ -453,6 +674,7 @@ function Profile({ userdata, setUserUpdate, mode, setMode }) {
             sx={{ cursor: "pointer" }}
             onClick={() => {
               console.log("edit button clicked");
+              setOpenExperience(true);
             }}
           >
             <EditIcon />
@@ -479,7 +701,7 @@ function Profile({ userdata, setUserUpdate, mode, setMode }) {
           <div>
             <h3>Education</h3>
             <ul>
-              <li>B.TECH</li>
+              <li>{userdata?.education}</li>
               <li>PG Diploma in Industrial Automation</li>
               <li>CCNA</li>
             </ul>
@@ -488,6 +710,8 @@ function Profile({ userdata, setUserUpdate, mode, setMode }) {
             sx={{ cursor: "pointer" }}
             onClick={() => {
               console.log("edit button clicked");
+              setOpenEducation(true);
+
             }}
           >
             <EditIcon />
@@ -514,7 +738,7 @@ function Profile({ userdata, setUserUpdate, mode, setMode }) {
           <div>
             <h3>Skills</h3>
             <ul>
-              <li>MERN stack developer trainee</li>
+              <li>{userdata?.skills}</li>
               <li>MERN stack developer trainee</li>
               <li>MERN stack developer trainee</li>
             </ul>
@@ -523,6 +747,8 @@ function Profile({ userdata, setUserUpdate, mode, setMode }) {
             sx={{ cursor: "pointer" }}
             onClick={() => {
               console.log("edit button clicked");
+              setOpenSkills(true);
+
             }}
           >
             <EditIcon />
