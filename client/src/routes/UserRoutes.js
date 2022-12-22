@@ -31,6 +31,7 @@ function UserRoutes() {
             <Route path="/profile" element={<ProfilePage />} />
             <Route path="/viewprofile" element={<ViewProfilePage />} />
 
+
             <Route path="/chat" element={<ChatPage />} />
 
           </Route>

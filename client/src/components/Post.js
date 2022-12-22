@@ -258,6 +258,7 @@ function Post({ post, setLiked }) {
                 MenuListProps={{
                   "aria-labelledby": "basic-button",
                 }}
+               
               >
                 {userId === post.userId._id ? (
                   <div>
@@ -301,22 +302,19 @@ function Post({ post, setLiked }) {
           alt=""
         ></CardMedia>
       ) : (
-        ""
-      )}
+        <CardMedia
+        component="video"
 
-      {post.video ? (
-        <video
           controls
           style={{ objectFit: "contain" }}
           width="800px"
           height="400px"
           src={post?.video}
           alt=""
-        ></video>
-      ) : (
-        ""
+        ></CardMedia>
       )}
 
+     
       <CardActions disableSpacing>
         {post.likes.length ? <span>{post.likes.length}</span> : ""}
 
@@ -350,9 +348,10 @@ function Post({ post, setLiked }) {
           <CommentIcon />
         </IconButton>
 
-        <IconButton aria-label="share">
+        {/* <IconButton aria-label="share">
           <ShareIcon />
-        </IconButton>
+        </IconButton> */}
+        
       </CardActions>
 
       <Collapse

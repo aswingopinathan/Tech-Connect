@@ -8,13 +8,16 @@ import {
 } from "@mui/material";
 import EditIcon from "@mui/icons-material/Edit";
 import Modal from "@mui/material/Modal";
-import { useState } from "react";
+import { useState,useContext } from "react";
 import CloseIcon from "@mui/icons-material/Close";
 import axios from "axios";
 import Grid from "@mui/material/Grid";
+import { UserContext } from "../context/Context";
 // import Loading from "./Loading";
 
+
 function Profile({ userdata, setUserUpdate, mode, setMode }) {
+  const{setUpdateNav}=useContext(UserContext)
 
   const style = {
     position: "absolute",
@@ -54,6 +57,7 @@ function Profile({ userdata, setUserUpdate, mode, setMode }) {
   const [skills, setSkills] = useState("");
 
   let userId = JSON.parse(localStorage.getItem("userInfo"))?._id;
+  
   let token = JSON.parse(localStorage.getItem("userInfo"))?.token;
 
   const config = {
@@ -80,6 +84,7 @@ function Profile({ userdata, setUserUpdate, mode, setMode }) {
       .then(() => {
         setOpenProfile(false);
         setUserUpdate(Math.random());
+        setUpdateNav(Math.random())
       });
   };
 
@@ -211,6 +216,8 @@ function Profile({ userdata, setUserUpdate, mode, setMode }) {
         setLoading(false);
         setPic(null);
         setUserUpdate(Math.random());
+        setUpdateNav(Math.random())
+
       } catch (error) {
         console.log(error);
         setLoading(false);
@@ -667,7 +674,7 @@ function Profile({ userdata, setUserUpdate, mode, setMode }) {
             <h3>Experience</h3>
             <ul>
               <li>{userdata?.experience}</li>
-              <li>Network Engineer</li>
+              {/* <li>Network Engineer</li> */}
             </ul>
           </div>
           <Button
@@ -702,8 +709,8 @@ function Profile({ userdata, setUserUpdate, mode, setMode }) {
             <h3>Education</h3>
             <ul>
               <li>{userdata?.education}</li>
-              <li>PG Diploma in Industrial Automation</li>
-              <li>CCNA</li>
+              {/* <li>PG Diploma in Industrial Automation</li> */}
+              {/* <li>CCNA</li> */}
             </ul>
           </div>
           <Button
@@ -739,8 +746,7 @@ function Profile({ userdata, setUserUpdate, mode, setMode }) {
             <h3>Skills</h3>
             <ul>
               <li>{userdata?.skills}</li>
-              <li>MERN stack developer trainee</li>
-              <li>MERN stack developer trainee</li>
+              {/* <li>Web Development</li> */}
             </ul>
           </div>
           <Button

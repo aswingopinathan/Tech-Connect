@@ -7,9 +7,16 @@ export default function TriggerContext({ children }) {
   
   const [notifications, setNotifications] = useState([]);
 
+  const [updateNav,setUpdateNav] = useState(false)
+
+  const [chatLoader,setChatLoader] = useState(false)
+
 
   return (
-    <UserContext.Provider value={{ trigger, setTrigger,notifications, setNotifications }}>
+    <UserContext.Provider value={{ trigger, setTrigger,
+    notifications, setNotifications,
+    updateNav,setUpdateNav,
+    chatLoader,setChatLoader }}>
       {children}
     </UserContext.Provider>
   );

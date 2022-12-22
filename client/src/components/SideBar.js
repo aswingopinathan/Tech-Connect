@@ -1,6 +1,5 @@
 import { Box, List, ListItem, ListItemButton, ListItemIcon, ListItemText } from "@mui/material";
 import React from "react";
-import PeopleIcon from '@mui/icons-material/People';
 import AccountCircleIcon from '@mui/icons-material/AccountCircle';
 import Switch from '@mui/material/Switch';
 import DarkModeIcon from '@mui/icons-material/DarkMode';
@@ -16,7 +15,6 @@ const navigate = useNavigate();
       <Box position={"fixed"}>
       <List>
         
-
           <ListItem disablePadding>
             <ListItemButton >
               <ListItemIcon>

@@ -8,7 +8,7 @@ function Conversation({ data, currentUserId,online }) {
   useEffect(() => {
     console.log('currentUserId',currentUserId);
     const userId = data.members.find((id) => id !== currentUserId);
-    console.log('userId',userId);
+    // console.log('userId',userId);
     const getUserData = async () => {
       try {
         const { data } = await getUser(userId);
@@ -22,6 +22,7 @@ function Conversation({ data, currentUserId,online }) {
   }, []);
   //  let pic = userData[0].pic;
   //  console.log('pic',pic);
+
   return (
     <>
       <div className="follower conversation" style={{scrollbarWidth:'none'}}>

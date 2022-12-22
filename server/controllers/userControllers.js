@@ -275,25 +275,6 @@ module.exports = {
     }
   }),
 
-  // removeComment: asyncHandler(async (req, res) => {
-  //   console.log("removeComment working");
-  //   try {
-  //     const { postId, userId, commentId } = req.body;
-  //     console.log('commentId',commentId);
-  //     Post.updateOne(
-  //       { _id: postId, "comments._id": { $eq: new ObjectId(commentId) } },
-  //       { $pull: { comments: { _id: new ObjectId(commentId) } } }
-  //     ).then((data) => {
-  //       console.log("removeComment working");
-  //       // console.log(data);
-  //       res.status(200).json(data);
-  //     });
-  //   } catch (error) {
-  //     console.log(error);
-  //     res.status(500).json(error)
-  //   }
-  // }),
-
   removeComment: asyncHandler(async (req, res) => {
     console.log("removeComment1 working");
     try {
@@ -352,6 +333,7 @@ module.exports = {
       res.status(500).json(error)
     }
   }),
+
 
   getUser: asyncHandler(async (req, res) => {
     try {
@@ -501,6 +483,23 @@ let userId = req.params.id
         } 
       ).then((data) => {
         console.log('editSkills successfull');
+        res.status(200).json(data);
+      });
+    } catch (error) {
+      console.log(error);
+      res.status(500).json(error)
+    }
+  }),
+
+  searchUser: asyncHandler(async (req, res) => {
+    try {
+      // const userId = req.query.userId;
+      const queryinput = req.params.queryinput;
+      console.log("backend queryinput",queryinput);
+
+      User.find({ name: { $regex: queryinput, $options: 'i' } }).then((data) => {
+        console.log("searchUser working");
+        console.log(data);
         res.status(200).json(data);
       });
     } catch (error) {

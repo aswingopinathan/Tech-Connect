@@ -20,15 +20,9 @@ function ChatBox({ chat, currentUser,setSendMessage,receiveMessage ,notification
       setMessages([...messages,receiveMessage])
     }else{
         setNotifications([chat,...notifications])
-        // setFetchAgain(!fetchAgain)
 
     }
-    // if(!receiveMessage.chatId || receiveMessage.chatId !==chat?._id ){
-    //   if(!notifications.includes(receiveMessage)){
-    //     setNotifications([receiveMessage,...notifications])
-    //     setFetchAgain(!fetchAgain)
-    //   }
-    // }
+   
   },[receiveMessage])
 
 // fetching data for header
@@ -93,6 +87,7 @@ function ChatBox({ chat, currentUser,setSendMessage,receiveMessage ,notification
   useEffect(()=>{
     scroll.current?.scrollIntoView({behavior:"smooth"})
   },[messages])
+console.log('messages',messages);
 
   return (
     <>
@@ -117,9 +112,9 @@ function ChatBox({ chat, currentUser,setSendMessage,receiveMessage ,notification
           </div>
 {/* chatBox Messages */}
         <div className="chat-body">
-            {messages.map((message)=>(
-                <>
-                <div ref={scroll}
+            {messages.map((message,index)=>(
+                <> 
+                <div ref={scroll} key={index}
                 className={message.senderId === currentUser ? "message own": "message"}>
                     <span>{message.text}</span>
                     <span>{format(message.createdAt)}</span>

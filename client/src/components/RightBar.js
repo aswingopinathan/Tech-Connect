@@ -12,9 +12,11 @@ import axios from "axios";
 // import MessageIcon from "@mui/icons-material/Message";
 import { Link, useNavigate } from "react-router-dom";
 import EmailIcon from "@mui/icons-material/Email";
+import { UserContext } from "../context/Context";
 // import { Stack } from "@mui/system";
 
 function RightBar() {
+  const { setChatLoader } = useContext(UserContext)
   const navigate = useNavigate();
 
   const [users, setUsers] = useState([]);
@@ -73,6 +75,7 @@ function RightBar() {
   };
 
   const redirectToChat = () => {
+    setChatLoader(Math.random())
     navigate("/chat");
   };
 
