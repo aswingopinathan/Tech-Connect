@@ -37,5 +37,16 @@ module.exports = {
         } catch (error) {
             res.status(500).json(error)
         }
+    }),
+
+    removeChat : asyncHandler(async(req,res)=>{
+        try {
+            const chat = await ChatModel.deleteOne({
+            members: [req.body.senderId, req.body.receiverId]
+            })
+            res.status(200).json(chat)
+        } catch (error) {
+            res.status(500).json(error)
+        }
     })
 }

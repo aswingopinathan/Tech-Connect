@@ -3,12 +3,13 @@ import {
   Avatar,
   Badge,
   Box,
+  Button,
   InputBase,
+  ListItem,
   ListItemAvatar,
   ListItemText,
   Menu,
   MenuItem,
-  Popover,
   styled,
   Toolbar,
   Typography,
@@ -20,15 +21,12 @@ import Notifications from "@mui/icons-material/Notifications";
 import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import HomeIcon from "@mui/icons-material/Home";
-import PeopleIcon from "@mui/icons-material/People";
-import WorkIcon from "@mui/icons-material/Work";
 import SearchIcon from "@mui/icons-material/Search";
-import { getUser } from "../api/UserRequest";
+import { findNotify, getUser } from "../api/UserRequest";
 import { UserContext } from "../context/Context";
-import Button from "@mui/material/Button";
 import axios from "axios";
-import { useRef } from 'react';
-import {io} from 'socket.io-client'
+import { useRef } from "react";
+import { io } from "socket.io-client";
 
 const StyledToolbar = styled(Toolbar)({
   display: "flex",
@@ -49,24 +47,20 @@ const Icons = styled(Box)(({ theme }) => ({
 }));
 
 function NavBar({ mode, setMode }) {
-  const { notifications, setNotifications, updateNav } =
-    useContext(UserContext);
+  
+  const { updateNav, setUniquePost } = useContext(UserContext);
 
   const [open, setOpen] = useState(false);
   const [userData, setUserData] = useState(null);
 
   const navigate = useNavigate();
-  // let imageUrl = JSON.parse(localStorage.getItem("userInfo"))?.pic;
-  // let userName = JSON.parse(localStorage.getItem("userInfo"))?.name;
   let userId = JSON.parse(localStorage.getItem("userInfo"))?._id;
 
   useEffect(() => {
     const getUserData = async () => {
       try {
-        // console.log('chatbox',userId);
         const { data } = await getUser(userId);
         setUserData(data);
-        // console.log("navbar", data);
       } catch (error) {
         console.log(error);
       }
@@ -109,37 +103,68 @@ function NavBar({ mode, setMode }) {
   const searching = async (queryinput) => {
     console.log("queryinput", queryinput);
     try {
-      let { data } = await axios.get(`/search/${queryinput}`, config);
-      // console.log("data1", data);
-      [data] = data;
-      // console.log("data2", data);
+      if(queryinput){
+        let { data } = await axios.get(`/search/${queryinput}`, config);
+      // console.log("data",data);
+        [data] = data;
+
+
       setDataReceived(data);
-      // console.log("data.name", data.name);
       if (queryinput.length > 4) {
         setAnchorE2(true);
       } else {
         setAnchorE2(false);
-        // setDataReceived(false)
       }
+      }
+      
     } catch (error) {
       console.log(error);
     }
   };
-  // if(dataReceived){
-  //   setAnchorE2(true)
-  // }
-  // const [onlineUsers,setOnlineUsers] = useState([])
-  const socket = useRef()
- useEffect(()=>{
-        socket.current = io('http://localhost:8800');
-        socket.current.emit("new-user-add",userId)
-        socket.current.on('get-users',(users)=>{
-            // setOnlineUsers(users)
-            // console.log('onlineUsers',onlineUsers);
-            console.log('for socket to work');
-        })
-    },[userId])
 
+  const socket = useRef();
+  useEffect(() => {
+    socket.current = io("http://localhost:8800");
+    socket.current.emit("new-user-add", userId);
+    socket.current.on("get-users", (users) => {
+      // setOnlineUsers(users)
+      // console.log('onlineUsers',onlineUsers);
+      // console.log("for socket to work");
+    });
+  }, [userId]);
+
+  const [notify,setNotify] = useState("");
+  const [myNotify,setMyNotify] = useState([])
+  const [updateNotify,setUpdateNotify] = useState(false)
+
+  useEffect(() => {
+    const getNotifications = async () => {
+      try {
+        const { data } = await findNotify(userId);
+        // console.log('notify',data);
+        // console.log('data.notifications',data.notifications);
+        // console.log('data.notifications',data.notifications);
+
+
+        setNotify(data);
+        setMyNotify(data.notifications)
+      } catch (error) { 
+        console.log(error);
+      }
+    };
+    getNotifications();
+  }, [updateNotify]);
+// console.log('notify.notifications.length',notify?.notifications?.length);
+
+  const clearNotification = async()=>{
+    await axios.post('/clearnotify',{
+      userId: userId,
+    },config).then(()=>{
+      setUpdateNotify(!updateNotify)
+    setAnchorEl(null);
+
+    })
+  }
   return (
     <AppBar position="sticky">
       <StyledToolbar>
@@ -159,7 +184,8 @@ function NavBar({ mode, setMode }) {
 
         <Search sx={{ padding: "0px", display: { xs: "none", sm: "block" } }}>
           {mode === "dark" ? (
-            <InputBase
+           <div>
+             <InputBase
               placeholder="search... "
               sx={{ bgcolor: "black", width: "100%", paddingLeft: "10px" }}
               onChange={(e) => {
@@ -167,14 +193,41 @@ function NavBar({ mode, setMode }) {
                 /////////
               }}
             />
+            <Menu
+                id="basic-menu"
+                // anchorE2={anchorE2}
+                anchorReference="anchorPosition"
+                anchorPosition={{ top: 60, left: 530 }}
+                open={newopen1}
+                onClose={handleClose1}
+                MenuListProps={{
+                  "aria-labelledby": "basic-button",
+                }}
+              >
+                <MenuItem
+                sx={{width:"400px"}}
+                > 
+                  <ListItemAvatar>
+                    <Link
+                      to="/viewprofile"
+                      state={{ userId: dataReceived._id }}
+                    >
+                      <Avatar alt="" src={dataReceived.pic} />
+                    </Link>
+                  </ListItemAvatar>
+                  <ListItemText primary={dataReceived.name} />
+                </MenuItem>
+              </Menu>
+           </div>
           ) : (
             <div>
               <InputBase
                 placeholder="search... "
-                sx={{ paddingLeft: "10px",
-                width:"100%",
-                // position:"relative"
-              }}
+                sx={{
+                  paddingLeft: "10px",
+                  width: "100%",
+                  // position:"relative"
+                }}
                 borderradius="40px"
                 onChange={(e) => {
                   searching(e.target.value);
@@ -182,20 +235,26 @@ function NavBar({ mode, setMode }) {
               />
               {/*  */}
 
+
               <Menu
                 id="basic-menu"
-                anchorE2={anchorE2}
+                // anchorE2={anchorE2}
+                anchorReference="anchorPosition"
+                anchorPosition={{ top: 60, left: 530 }}
                 open={newopen1}
                 onClose={handleClose1}
                 MenuListProps={{
                   "aria-labelledby": "basic-button",
                 }}
-                // sx={{position:"absolute",right:"0"}}
               >
                 <MenuItem
-                >
+                sx={{width:"400px"}}
+                > 
                   <ListItemAvatar>
-                    <Link to="/viewprofile" state={{ userId: dataReceived._id }}>
+                    <Link
+                      to="/viewprofile"
+                      state={{ userId: dataReceived._id }}
+                    >
                       <Avatar alt="" src={dataReceived.pic} />
                     </Link>
                   </ListItemAvatar>
@@ -203,7 +262,6 @@ function NavBar({ mode, setMode }) {
                 </MenuItem>
               </Menu>
 
-             
               {/*  */}
             </div>
           )}
@@ -216,6 +274,7 @@ function NavBar({ mode, setMode }) {
             sx={{ cursor: "pointer" }}
             onClick={(e) => {
               navigate("/user");
+              setUniquePost(false) 
             }}
           >
             <HomeIcon />
@@ -246,38 +305,75 @@ function NavBar({ mode, setMode }) {
             <Mail />
           </Badge>
 
-          <Badge badgeContent={1} color="error">
+          <Badge badgeContent={notify?.notifications?.length} color="error"
+           sx={{ cursor: "pointer" }}
+           onClick={() => {
+            console.log('notification clicked');
+            // handleClick()
+            // setAnchorE1(true)
+            setAnchorEl(true)
+           }}
+           >
             <Notifications />
           </Badge>
           <>
-            {/* <Button
-              id="basic-button"
-              aria-controls={newopen ? "basic-menu" : undefined}
-              aria-haspopup="true"
-              aria-expanded={newopen ? "true" : undefined}
-              onClick={handleClick}
+            {(notify?.notifications?.length > 0) ?(<Menu
+            id="basic-menu"
+            // anchorE2={anchorE2}
+            anchorReference="anchorPosition"
+            anchorPosition={{ top: 60, left: 1200 }}
+            open={newopen}
+            onClose={handleClose}
+            MenuListProps={{
+              "aria-labelledby": "basic-button",
+            }}
             >
-              Dashboard
-              <Badge badgeContent={1} color="error">
-                <Notifications color="error" />
-              </Badge>
-            </Button>
+            {myNotify?.map((nmessages)=>(
+                <MenuItem
+                sx={{width:"300px"}}
+                onClick={()=>{
+                  // console.log('nmessages.commentedpostid',nmessages.commentedpostid);
+                  // console.log('nmessages.likedpostid',nmessages.likedpostid);
 
-            <Menu
-              id="basic-menu"
-              anchorEl={anchorEl}
-              open={newopen}
-              onClose={handleClose}
-              MenuListProps={{
-                "aria-labelledby": "basic-button",
-              }}
+                  setUniquePost(nmessages.likedpostid || nmessages.commentedpostid)
+                   setAnchorEl(null);
+
+                }}
+                > 
+                    <ListItemText primary={nmessages.message} />
+                </MenuItem>
+                  ))}
+                <MenuItem
+                sx={{width:"300px"}}
+                > 
+                  {/* <ListItemText primary={dataReceived.name} /> */}
+                  <Button
+                  variant="contained"
+                  onClick={()=>{
+                    clearNotification()
+                  }}
+                  >Mark as read</Button>
+                </MenuItem>
+                  
+              </Menu>):(<Menu
+            id="basic-menu"
+            // anchorE2={anchorE2}
+            anchorReference="anchorPosition"
+            anchorPosition={{ top: 60, left: 1200 }}
+            open={newopen}
+            onClose={handleClose}
+            MenuListProps={{
+              "aria-labelledby": "basic-button",
+            }}
             >
-              <MenuItem onClick={handleClose}>
-                {"No new messages"}
-              </MenuItem>
-            </Menu> */}
+                <MenuItem
+                sx={{width:"300px"}}
+                > 
+                    <ListItemText primary="No notification" />
+                </MenuItem>
+                
+              </Menu>)}
           </>
-          
 
           <span>{userData?.name}</span>
 

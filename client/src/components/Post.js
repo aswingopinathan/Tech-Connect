@@ -14,19 +14,21 @@ import {
 } from "@mui/material";
 import SendIcon from "@mui/icons-material/Send";
 import TextField from "@mui/material/TextField";
-import ShareIcon from "@mui/icons-material/Share";
+// import ShareIcon from "@mui/icons-material/Share";
 import MoreVertIcon from "@mui/icons-material/MoreVert";
 import Favorite from "@mui/icons-material/Favorite";
 import FavoriteBorder from "@mui/icons-material/FavoriteBorder";
 import CommentIcon from "@mui/icons-material/Comment";
 import axios from "axios";
-import { useState } from "react";
+import { useState,useContext } from "react";
 import Collapse from "@mui/material/Collapse";
 import { format } from "timeago.js";
 import { getUser } from "../api/UserRequest";
 import { Link, useNavigate } from "react-router-dom";
+// import { UserContext } from "../context/Context";
 
 function Post({ post, setLiked }) {
+  // const { setUniquePost } = useContext(UserContext)
   const navigate = useNavigate();
 
   // const userData = JSON.parse(localStorage.getItem("userInfo"));
@@ -78,8 +80,14 @@ function Post({ post, setLiked }) {
         },
         config
       )
-      .then(() => {
+      .then(async() => {
         setLiked(Math.random());
+        // await axios.post('/notifylike',
+        // {
+        //   userid: userData._id,
+        //   postid: post._id,
+        //   name: userData.name,
+        // },config)
       });
   };
 
@@ -204,6 +212,62 @@ function Post({ post, setLiked }) {
     )
     };
 
+    const likeNotify = async (likedUserId,postId,postUserId,likedUsername) => {
+      await axios
+      .post(
+        "/notifylike",
+        {
+          likedUserId: likedUserId,
+          postId: postId,
+          postUserId: postUserId,
+          likedUsername: likedUsername,
+        },
+        config
+      )
+      };
+
+      const unlikeNotify = async (likedUserId,postId,postUserId) => {
+        console.log("unlikeNotify working");
+        await axios
+        .post(
+          "/notifyunlike",
+          {
+            likedUserId: likedUserId,
+            postId: postId,
+            postUserId: postUserId,
+            // likedUsername: likedUsername,
+          },
+          config
+        )
+        };
+
+        const commentNotify = async (commentedUserId,postId,postUserId,commentedUsername) => {
+          await axios
+          .post(
+            "/notifycomment",
+            {
+              commentedUserId: commentedUserId,
+              postId: postId,
+              postUserId: postUserId,
+              commentedUsername: commentedUsername,
+            },
+            config
+          )
+          };
+
+          const uncommentNotify = async (commentedUserId,postId,postUserId) => {
+            console.log("uncommentNotify working");
+            await axios
+            .post(
+              "/notifyuncomment",
+              {
+                commentedUserId: commentedUserId,
+                postId: postId,
+                postUserId: postUserId,
+              },
+              config
+            )
+            };
 
      // axios requests end
 
@@ -229,6 +293,7 @@ function Post({ post, setLiked }) {
               navigate('/profile')
             }}
             ></Avatar>):(<Link to='/viewprofile' state={{ userId: post.userId._id}}>
+
             <Avatar aria-label="recipe" src={post?.userId.pic}></Avatar>
             </Link>
             )}
@@ -324,6 +389,7 @@ function Post({ post, setLiked }) {
             aria-label="add to favorites"
             onClick={() => {
               unlike();
+              unlikeNotify(userId,post._id,post.userId._id)
             }}
           >
             <Favorite sx={{ color: "red" }} />
@@ -333,6 +399,11 @@ function Post({ post, setLiked }) {
             aria-label="add to favorites"
             onClick={() => {
               like();
+              console.log('userId',userId);
+              console.log('post._id',post._id);
+              console.log('post.userId._id',post.userId._id);
+              console.log('userData.name',userData.name);
+              likeNotify(userId,post._id,post.userId._id,userData.name)
             }}
           >
             <FavoriteBorder />
@@ -398,6 +469,7 @@ function Post({ post, setLiked }) {
                 endIcon={<SendIcon />}
                 onClick={() => {
                   addComment();
+                  commentNotify(userId,post._id,post.userId._id,userData.name)
                 }}
               >
                 Post
@@ -438,7 +510,9 @@ function Post({ post, setLiked }) {
                         // console.log('allcomment._id',allcomment._id);
                         // console.log('post.userId._id',post.userId._id);
                         // console.log('post._id',post._id);
+                        
                         removecomment(allcomment._id,post.userId._id,post._id)
+                        // uncommentNotify(userId,post.userId._id,post._id)
                       }}
                     >
                       Delete

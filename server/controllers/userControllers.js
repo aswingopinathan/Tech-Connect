@@ -1,6 +1,8 @@
 const asyncHandler = require("express-async-handler");
 const User = require("../models/userModel");
 const Post = require("../models/postModel");
+const Notification = require("../models/notificationModel");
+
 const generateToken = require("../utils/generateToken");
 const nodemailer = require("nodemailer");
 const ObjectId = require("mongoose").Types.ObjectId;
@@ -40,7 +42,7 @@ module.exports = {
       res.json(req.body);
     } catch (error) {
       console.log(error);
-      res.status(500).json(error)
+      res.status(500).json(error);
     }
   }),
 
@@ -100,7 +102,7 @@ module.exports = {
       }
     } catch (error) {
       console.log(error);
-      res.status(500).json(error)
+      res.status(500).json(error);
     }
   }),
 
@@ -131,15 +133,14 @@ module.exports = {
       });
     } catch (error) {
       console.log(error);
-      res.status(500).json(error)
+      res.status(500).json(error);
     }
   }),
 
   addPost: asyncHandler(async (req, res) => {
-    
     try {
       const { pic, description, video, name, userId } = req.body;
-      
+
       userPost = {
         name: "",
         userId: "",
@@ -175,7 +176,7 @@ module.exports = {
       res.json(req.body);
     } catch (error) {
       console.log(error);
-      res.status(500).json(error)
+      res.status(500).json(error);
     }
   }),
 
@@ -188,7 +189,7 @@ module.exports = {
         });
     } catch (error) {
       console.log(error);
-      res.status(500).json(error)
+      res.status(500).json(error);
     }
   }),
 
@@ -204,7 +205,7 @@ module.exports = {
       );
     } catch (error) {
       console.log(error);
-      res.status(500).json(error)
+      res.status(500).json(error);
     }
   }),
 
@@ -218,20 +219,19 @@ module.exports = {
       );
     } catch (error) {
       console.log(error);
-      res.status(500).json(error)
+      res.status(500).json(error);
     }
   }),
 
   addComment: asyncHandler(async (req, res) => {
-
     try {
       const { postId, userId, comment, name, pic } = req.body;
-      
+
       date = new Date();
 
       Post.updateOne(
         { _id: postId },
-        { $push: { comments: { userId, comment, name, pic ,date} } }
+        { $push: { comments: { userId, comment, name, pic, date } } }
       ).then((data) => {
         console.log("addcomment db  working");
         console.log("data", data);
@@ -239,7 +239,7 @@ module.exports = {
       });
     } catch (error) {
       console.log(error);
-      res.status(500).json(error)
+      res.status(500).json(error);
     }
   }),
 
@@ -254,7 +254,7 @@ module.exports = {
       });
     } catch (error) {
       console.log(error);
-      res.status(500).json(error)
+      res.status(500).json(error);
     }
   }),
 
@@ -271,7 +271,7 @@ module.exports = {
       );
     } catch (error) {
       console.log(error);
-      res.status(500).json(error)
+      res.status(500).json(error);
     }
   }),
 
@@ -279,9 +279,10 @@ module.exports = {
     console.log("removeComment1 working");
     try {
       const { postId, userId, commentId } = req.body;
-      console.log('commentId',commentId);
+      console.log("commentId", commentId);
       Post.updateOne(
-        { _id: postId , "comments.userId":{$eq:userId} },{ $pull: { comments: { _id: commentId} } }
+        { _id: postId, "comments.userId": { $eq: userId } },
+        { $pull: { comments: { _id: commentId } } }
       ).then((data) => {
         console.log("removeComment2 working");
         console.log(data);
@@ -289,15 +290,15 @@ module.exports = {
       });
     } catch (error) {
       console.log(error);
-      res.status(500).json(error)
+      res.status(500).json(error);
     }
   }),
 
   editProfile: asyncHandler(async (req, res) => {
     try {
       const { userId, name, jobstatus, currentposition, place } = req.body;
-      
-      if(ObjectId.isValid(userId)){
+
+      if (ObjectId.isValid(userId)) {
         User.updateOne(
           { _id: userId },
           {
@@ -307,16 +308,16 @@ module.exports = {
               jobPosition: currentposition,
               place: place,
             },
-          } 
+          }
         ).then((data) => {
           res.status(200).json(data);
         });
-      }else{
-        throw new Error("invalid userid")
+      } else {
+        throw new Error("invalid userid");
       }
     } catch (error) {
       console.log(error);
-      res.status(500).json(error)
+      res.status(500).json(error);
     }
   }),
 
@@ -330,164 +331,196 @@ module.exports = {
       });
     } catch (error) {
       console.log(error);
-      res.status(500).json(error)
+      res.status(500).json(error);
     }
   }),
-
 
   getUser: asyncHandler(async (req, res) => {
     try {
       const userId = req.params.id;
       User.find({ _id: userId }).then((data) => {
         console.log("getUser working");
-         [data] = data;
-        console.log(data);
+        [data] = data;
+        // console.log(data);
         res.status(200).json(data);
       });
-    } catch (error) {  
+    } catch (error) {
       console.log(error);
-      res.status(500).json(error)
+      res.status(500).json(error);
     }
   }),
 
   getSuggestions: asyncHandler(async (req, res) => {
-let userId = req.params.id
+    let userId = req.params.id;
     try {
-      User.find({_id:{$ne:userId}}).then((data) => {
+      User.find({ _id: { $ne: userId } }).then((data) => {
         res.status(200).json(data);
       });
-    } catch (error) {  
+    } catch (error) {
       console.log(error);
-      res.status(500).json(error)
+      res.status(500).json(error);
     }
   }),
 
-  connectUser1: asyncHandler(async (req, res,next) => {
+  connectUser1: asyncHandler(async (req, res, next) => {
     try {
       const { userId, connectUserId } = req.body;
-      User.updateOne({ _id: userId }, { $push: { connectionIds: connectUserId } })
-      .then(
-        (data) => {
-          console.log("connectUser1 working");
-          console.log(data);
-          next()
-          // res.status(200).json(data);
-        }
-      );
+      User.updateOne(
+        { _id: userId },
+        { $push: { connectionIds: connectUserId } }
+      ).then((data) => {
+        console.log("connectUser1 working");
+        console.log(data);
+        next();
+        // res.status(200).json(data);
+      });
     } catch (error) {
       console.log(error);
-      res.status(500).json(error)
+      res.status(500).json(error);
     }
   }),
 
   connectUser2: asyncHandler(async (req, res) => {
     try {
       const { userId, connectUserId } = req.body;
-      User.updateOne({ _id: connectUserId }, { $push: { connectionIds: userId } }) 
-      .then(
-        (data) => {
-          console.log("connectUser2 working");
-          console.log(data);
-          res.status(200).json(data);
-        }
-      ); 
+      User.updateOne(
+        { _id: connectUserId },
+        { $push: { connectionIds: userId } }
+      ).then((data) => {
+        console.log("connectUser2 working");
+        console.log(data);
+        res.status(200).json(data);
+      });
     } catch (error) {
       console.log(error);
-      res.status(500).json(error)
+      res.status(500).json(error);
     }
   }),
-  
+
+  disConnectUser1: asyncHandler(async (req, res, next) => {
+    try {
+      const { userId, disConnectUserId } = req.body;
+      User.updateOne(
+        { _id: userId },
+        { $pull: { connectionIds: disConnectUserId } }
+      ).then((data) => {
+        console.log("disConnectUser1 working");
+        console.log(data);
+        next();
+        // res.status(200).json(data);
+      });
+    } catch (error) {
+      console.log(error);
+      res.status(500).json(error);
+    }
+  }),
+
+  disConnectUser2: asyncHandler(async (req, res) => {
+    try {
+      const { userId, disConnectUserId } = req.body;
+      User.updateOne(
+        { _id: disConnectUserId },
+        { $pull: { connectionIds: userId } }
+      ).then((data) => {
+        console.log("disConnectUser2 working");
+        console.log(data);
+        res.status(200).json(data);
+      });
+    } catch (error) {
+      console.log(error);
+      res.status(500).json(error);
+    }
+  }),
+
   picUpdate: asyncHandler(async (req, res) => {
     try {
       const { userId, pic } = req.body;
-      User.updateOne({ _id: userId }, {$set:{ pic: pic}} ).then(
-        (data) => {
-          res.status(200).json(data);
-        }
-      );
+      User.updateOne({ _id: userId }, { $set: { pic: pic } }).then((data) => {
+        res.status(200).json(data);
+      });
     } catch (error) {
       console.log(error);
-      res.status(500).json(error)
+      res.status(500).json(error);
     }
   }),
 
   editAbout: asyncHandler(async (req, res) => {
     try {
-      const { userId,about } = req.body;
+      const { userId, about } = req.body;
       User.updateOne(
         { _id: userId },
         {
           $set: {
             about: about,
           },
-        } 
+        }
       ).then((data) => {
-        console.log('editAbout successfull');
+        console.log("editAbout successfull");
         res.status(200).json(data);
       });
     } catch (error) {
       console.log(error);
-      res.status(500).json(error)
+      res.status(500).json(error);
     }
   }),
 
   editExperience: asyncHandler(async (req, res) => {
     try {
-      const { userId,experience } = req.body;
+      const { userId, experience } = req.body;
       User.updateOne(
         { _id: userId },
         {
           $set: {
             experience: experience,
           },
-        } 
+        }
       ).then((data) => {
-        console.log('editExperience successfull');
+        console.log("editExperience successfull");
         res.status(200).json(data);
       });
     } catch (error) {
       console.log(error);
-      res.status(500).json(error)
+      res.status(500).json(error);
     }
   }),
 
   editEducation: asyncHandler(async (req, res) => {
     try {
-      const { userId,education } = req.body;
+      const { userId, education } = req.body;
       User.updateOne(
         { _id: userId },
         {
           $set: {
             education: education,
           },
-        } 
+        }
       ).then((data) => {
-        console.log('editEducation successfull');
+        console.log("editEducation successfull");
         res.status(200).json(data);
       });
     } catch (error) {
       console.log(error);
-      res.status(500).json(error)
+      res.status(500).json(error);
     }
   }),
 
   editSkills: asyncHandler(async (req, res) => {
     try {
-      const { userId,skills } = req.body;
+      const { userId, skills } = req.body;
       User.updateOne(
         { _id: userId },
         {
           $set: {
             skills: skills,
           },
-        } 
+        }
       ).then((data) => {
-        console.log('editSkills successfull');
+        console.log("editSkills successfull");
         res.status(200).json(data);
       });
     } catch (error) {
       console.log(error);
-      res.status(500).json(error)
+      res.status(500).json(error);
     }
   }),
 
@@ -495,16 +528,162 @@ let userId = req.params.id
     try {
       // const userId = req.query.userId;
       const queryinput = req.params.queryinput;
-      console.log("backend queryinput",queryinput);
+      // console.log("backend queryinput",queryinput);
 
-      User.find({ name: { $regex: queryinput, $options: 'i' } }).then((data) => {
-        console.log("searchUser working");
-        console.log(data);
-        res.status(200).json(data);
-      });
+      User.find({ name: { $regex: queryinput, $options: "i" } }).then(
+        (data) => {
+          // console.log("searchUser working");
+          console.log(data);
+          res.status(200).json(data);
+        }
+      );
     } catch (error) {
       console.log(error);
-      res.status(500).json(error)
+      res.status(500).json(error);
+    }
+  }),
+
+  notifyLike: asyncHandler(async (req, res) => {
+    try {
+      const {  likedUserId,postId, postUserId,likedUsername } = req.body;
+      const message = `${likedUsername} liked your post`
+      await Notification.updateOne(
+        {
+          userid: ObjectId(postUserId),
+        },
+        { 
+          $push: {
+            notifications: {
+              likeduserid: likedUserId,
+              likedpostid: postId,
+              message: message,
+            },
+          },
+        },
+        {
+          upsert: true,
+        }
+      ).then((data)=>{
+      console.log(data);
+        res.status(200).json(data);
+      })
+      
+    } catch (error) {
+      console.log(error);
+      res.status(500).json(error);
+    }
+  }),
+
+  findNotifications: asyncHandler(async (req, res) => {
+    const userId  = req.params.userid
+    try {
+      Notification.find({ userid:userId }).then(
+        (data) => {
+          console.log("data",data);
+          console.log('data[0]',data[0]);
+          res.status(200).json(data[0]);
+        }
+      );
+    } catch (error) {
+      console.log(error);
+      res.status(500).json(error);
+    }
+  }),
+
+  clearNotification: asyncHandler(async (req, res) => {
+    const {userId}  = req.body
+    try {
+      Notification.deleteOne({ userid:userId }).then(
+        (data) => {
+          console.log("data",data);
+          // console.log('data[0]',data[0]);
+          res.status(200).json(data);
+        }
+      );
+    } catch (error) {
+      console.log(error);
+      res.status(500).json(error);
+    }
+  }),
+
+  notifyUnlike: asyncHandler(async (req, res) => {
+    try {
+      const {  likedUserId, postUserId,postId } = req.body;
+      await Notification.updateOne(
+        { userid: postUserId, "notifications.likeduserId": { $eq: likedUserId } },
+        { $pull: { notifications: { likedpostid: postId } } }
+      ).then((data)=>{
+      console.log(data);
+      console.log("notifyUnlike working");
+        res.status(200).json(data);
+      })
+      
+    } catch (error) {
+      console.log(error);
+      res.status(500).json(error);
+    }
+  }),
+
+  notifyComment: asyncHandler(async (req, res) => {
+    try {
+      const {  commentedUserId,postId, postUserId,commentedUsername } = req.body;
+      const message = `${commentedUsername} commented your post`
+      await Notification.updateOne(
+        {
+          userid: ObjectId(postUserId),
+        },
+        { 
+          $push: {
+            notifications: {
+              commenteduserid: commentedUserId,
+              commentedpostid: postId,
+              message: message,
+            },
+          },
+        },
+        {
+          upsert: true,
+        }
+      ).then((data)=>{
+      console.log(data);
+        res.status(200).json(data);
+      })
+      
+    } catch (error) {
+      console.log(error);
+      res.status(500).json(error);
+    }
+  }),
+
+  notifyUncomment: asyncHandler(async (req, res) => {
+    try {
+      const {  commentedUserId, postUserId,postId } = req.body;
+      await Notification.updateOne(
+        { userid: postUserId, "notifications.likeduserId": { $eq: commentedUserId } },
+        { $pull: { notifications: { commentedpostid: postId } } }
+      ).then((data)=>{
+      console.log(data);
+      console.log("notifyUnlike working");
+        res.status(200).json(data);
+      })
+      
+    } catch (error) {
+      console.log(error);
+      res.status(500).json(error);
+    }
+  }),
+
+  getUniquePost: asyncHandler(async (req, res) => {
+    const postId = req.params.postId;
+    try {
+      Post.find({_id: postId})
+        .populate("userId")
+        .then((data) => {
+          res.status(200).json(data.reverse());
+        });
+    } catch (error) {
+      console.log(error);
+      res.status(500).json(error);
     }
   }),
 };

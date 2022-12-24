@@ -11,8 +11,12 @@ import {io} from 'socket.io-client'
 import { useRef } from 'react';
 import { UserContext } from '../../context/Context';
 // import { getUser } from '../../api/UserRequest';
+import { useLocation } from "react-router-dom";
+
 
 function Chat() {
+const location = useLocation()
+
     const{notifications, setNotifications}=useContext(UserContext)
 
   const userData = JSON.parse(localStorage.getItem("userInfo"));
@@ -52,7 +56,7 @@ function Chat() {
     useEffect(()=>{
         socket.current.on("receive-message",(data)=>{
             setReceiveMessage(data)
-        })
+        }) 
     },[])
 
     useEffect(()=>{
@@ -63,6 +67,7 @@ function Chat() {
                 setChats(data)
                 console.log('Chat',data);
             } catch (error) {
+
                 console.log(error);
             }
         }
@@ -103,7 +108,8 @@ const checkOnlineStatus = (chat)=>{
             {/* Right side chat */}
             <div className="Right-side-chat">
                 {/* Right side */}
-                <ChatBox chat={currentChat} currentUser={userData._id} setSendMessage={setSendMessage}
+                {/* <ChatBox chat={currentChat || (location?.state?.chat)} currentUser={userData._id} setSendMessage={setSendMessage} */}
+                <ChatBox chat={currentChat || (location?.state?.chat)} currentUser={userData._id} setSendMessage={setSendMessage}
                 receiveMessage={receiveMessage} setNotifications={setNotifications} notifications={notifications}/>
             </div>
         </div>

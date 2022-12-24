@@ -6,6 +6,8 @@ import {
 } from "@mui/material";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
+import { findChat } from "../api/ChatRequest";
+// import { findChat } from "../../../server/controllers/ChatController";
 
 
 function ViewProfile({ userdata, mode, setMode, setConnectUpdate }) {
@@ -37,6 +39,21 @@ const connectUser = async (id) => {
     });
 };
 
+const disConnectUser = async (id) => {
+  await axios
+    .post(
+      "/disconnectuser",
+      {
+        userId: userId,
+        disConnectUserId: id,
+      },
+      config
+    )
+    .then(() => {
+      setConnectUpdate(Math.random());
+    });
+};
+
 const chatCreator = async (id) => {
   await axios.post(
     "/chat",
@@ -47,7 +64,18 @@ const chatCreator = async (id) => {
     config
   );
 };
-// console.log('userdata._id',userdata._id);
+
+const chatRemover = async (id) => {
+  await axios.post(
+    "/chat/removechat",
+    {
+      senderId: userId,
+      receiverId: id,
+    },
+    config
+  );
+};
+
   return (
     <Box>
       
@@ -89,19 +117,32 @@ const chatCreator = async (id) => {
           <div style={{
             margin:"20px"
           }}>
-            {userdata.connectionIds && userdata.connectionIds.includes(userId)?<Button 
+            {userdata.connectionIds && userdata.connectionIds.includes(userId)?(<>
+              <Button 
+              sx={{marginRight:"10px"}}
             variant='contained'
             onClick={()=>{
-              navigate('/chat')
+              findChat(userId,userdata._id).then((data)=>{
+                console.log("chat",data.data);
+                navigate('/chat',{ state : {chat : data.data}})
+              })
             }}
-            >Message</Button>:<Button 
+            >Message</Button>
+            <Button 
+            // variant='contained'
+            variant="outlined" color="error"
+            onClick={()=>{
+              disConnectUser(userdata._id)
+              chatRemover(userdata._id)
+            }}
+            >-Disconnect</Button></>):(<Button 
             variant='contained'
             onClick={()=>{
               connectUser(userdata._id)
               chatCreator(userdata._id)
 
             }}
-            >+Connect</Button>}
+            >+Connect</Button>)}
             
           </div>
             
@@ -195,7 +236,7 @@ const chatCreator = async (id) => {
             <h3>Experience</h3>
             <ul>
               <li>{userdata?.experience}</li>
-              <li>Network Engineer</li>
+              {/* <li>Network Engineer</li> */}
             </ul>
           </div>
           
@@ -222,8 +263,8 @@ const chatCreator = async (id) => {
             <h3>Education</h3>
             <ul>
               <li>{userdata?.education}</li>
-              <li>PG Diploma in Industrial Automation</li>
-              <li>CCNA</li>
+              {/* <li>PG Diploma in Industrial Automation</li> */}
+              {/* <li>CCNA</li> */}
             </ul>
           </div>
          
@@ -250,8 +291,8 @@ const chatCreator = async (id) => {
             <h3>Skills</h3>
             <ul>
               <li>{userdata?.skills}</li>
-              <li>MERN stack developer trainee</li>
-              <li>MERN stack developer trainee</li>
+              {/* <li>MERN stack developer trainee</li> */}
+              {/* <li>MERN stack developer trainee</li> */}
             </ul>
           </div>
           

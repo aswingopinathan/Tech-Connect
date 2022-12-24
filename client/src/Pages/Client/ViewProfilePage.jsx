@@ -7,6 +7,7 @@ import { useEffect, useState } from "react";
 import { createTheme, Stack, ThemeProvider } from "@mui/material";
 import { Box } from "@mui/system";
 import { useLocation } from "react-router-dom";
+
 import ViewProfile from "../../components/ViewProfile";
 
 function ViewProfilePage() {

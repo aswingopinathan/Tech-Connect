@@ -13,6 +13,7 @@ import axios from "axios";
 import { Link, useNavigate } from "react-router-dom";
 import EmailIcon from "@mui/icons-material/Email";
 import { UserContext } from "../context/Context";
+import { findChat } from "../api/ChatRequest";
 // import { Stack } from "@mui/system";
 
 function RightBar() {
@@ -28,7 +29,7 @@ function RightBar() {
     const allUsers = async (userId) => {
       try {
         let { data } = await getAllUsers(userId);
-        console.log("rightbar incoming data", data);
+        // console.log("rightbar incoming data", data);
         setUsers(data);
       } catch (error) {
         console.log(error);
@@ -74,10 +75,10 @@ function RightBar() {
     );
   };
 
-  const redirectToChat = () => {
-    setChatLoader(Math.random())
-    navigate("/chat");
-  };
+  // const redirectToChat = () => {
+  //   setChatLoader(Math.random())
+  //   navigate("/chat");
+  // };
 
   return (
     <>
@@ -126,7 +127,8 @@ function RightBar() {
                           {usersall.connectionIds.includes(userId) ? (
                             <Button
                               onClick={() => {
-                                redirectToChat();
+                                // redirectToChat();
+                               
                               }}
                             >
                               <EmailIcon />
@@ -206,7 +208,11 @@ function RightBar() {
                           {usersall.connectionIds.includes(userId) ? (
                             <Button
                               onClick={() => {
-                                redirectToChat();
+                                // redirectToChat();
+                                findChat(userId,usersall._id).then((data)=>{
+                                  // console.log("chat",data.data);
+                                  navigate('/chat',{ state : {chat : data.data}})
+                                })
                               }}
                             >
                               <EmailIcon />

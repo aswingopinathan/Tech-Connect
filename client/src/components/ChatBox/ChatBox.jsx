@@ -39,7 +39,7 @@ function ChatBox({ chat, currentUser,setSendMessage,receiveMessage ,notification
         console.log(error);
       }
     };
-    if (chat !== null) getUserData();
+    if (chat) getUserData();
   }, [chat, currentUser]);
 
 //   fetching data for messages

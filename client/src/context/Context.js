@@ -11,12 +11,16 @@ export default function TriggerContext({ children }) {
 
   const [chatLoader,setChatLoader] = useState(false)
 
+  const [uniquePost,setUniquePost] = useState(false)
+
 
   return (
     <UserContext.Provider value={{ trigger, setTrigger,
     notifications, setNotifications,
     updateNav,setUpdateNav,
-    chatLoader,setChatLoader }}>
+    chatLoader,setChatLoader,
+    uniquePost,setUniquePost 
+    }}>
       {children}
     </UserContext.Provider>
   );
