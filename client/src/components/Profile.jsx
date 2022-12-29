@@ -14,7 +14,9 @@ import axios from "axios";
 import Grid from "@mui/material/Grid";
 import { UserContext } from "../context/Context";
 // import Loading from "./Loading";
-
+import AddCircleOutlineIcon from '@mui/icons-material/AddCircleOutline';
+import DeleteIcon from '@mui/icons-material/Delete';
+import ClearIcon from '@mui/icons-material/Clear';
 
 function Profile({ userdata, setUserUpdate, mode, setMode }) {
   const{setUpdateNav}=useContext(UserContext)
@@ -110,10 +112,10 @@ function Profile({ userdata, setUserUpdate, mode, setMode }) {
     console.log("handleExperience working");
     await axios
       .post(
-        "/editexperience",
+        "/addexperience",
         {
           userId: userId,
-          experience: experience,
+          exp: experience,
         },
         config
       )
@@ -128,10 +130,10 @@ function Profile({ userdata, setUserUpdate, mode, setMode }) {
     console.log("handleEducation working");
     await axios
       .post(
-        "/editeducation",
+        "/addeducation",
         {
           userId: userId,
-          education: education,
+          edu: education,
         },
         config
       )
@@ -146,7 +148,7 @@ function Profile({ userdata, setUserUpdate, mode, setMode }) {
     console.log("handleSkills working");
     await axios
       .post(
-        "/editskills",
+        "/addskills",
         {
           userId: userId,
           skills: skills,
@@ -226,7 +228,37 @@ function Profile({ userdata, setUserUpdate, mode, setMode }) {
       console.log("No pic data");
     }
   };
+
 //
+const clearExp = (exp)=>{
+  axios.post('/clearexp',{
+    userId:userId,
+    expValue:exp,
+  },config).then(()=>{
+    setUserUpdate(Math.random());
+
+  })
+}
+
+const clearEdu = (edu)=>{
+  axios.post('/clearedu',{
+    userId:userId,
+    eduValue:edu,
+  },config).then(()=>{
+    setUserUpdate(Math.random());
+
+  })
+}
+
+const clearSkill = (skill)=>{
+  axios.post('/clearskill',{
+    userId:userId,
+    skillValue:skill,
+  },config).then(()=>{
+    setUserUpdate(Math.random());
+
+  })
+}
   return (
     <Box>
       {/* modal1 start */}
@@ -383,7 +415,7 @@ function Profile({ userdata, setUserUpdate, mode, setMode }) {
               component="h2"
               color={"text.primary"}
             >
-              Edit Experience
+              Add Experience
             </Typography>
           </div>
 
@@ -437,7 +469,7 @@ function Profile({ userdata, setUserUpdate, mode, setMode }) {
               component="h2"
               color={"text.primary"}
             >
-              Edit Education
+              Add Education
             </Typography>
           </div>
 
@@ -491,7 +523,7 @@ function Profile({ userdata, setUserUpdate, mode, setMode }) {
               component="h2"
               color={"text.primary"}
             >
-              Edit Skills
+              Add Skills
             </Typography>
           </div>
 
@@ -658,7 +690,8 @@ function Profile({ userdata, setUserUpdate, mode, setMode }) {
         sx={{
           marginLeft: "350px",
           width: "800px",
-          height: "100px",
+          minHeight: "70px",
+          maxHeight:"auto",
           bgcolor: "background.default",
         }}
       >
@@ -673,18 +706,26 @@ function Profile({ userdata, setUserUpdate, mode, setMode }) {
           <div>
             <h3>Experience</h3>
             <ul>
-              <li>{userdata?.experience}</li>
-              {/* <li>Network Engineer</li> */}
+                {userdata.experience?.map((exp)=>(
+                  <li key={exp}>{exp} <ClearIcon
+                  sx={{ cursor:"pointer"}}
+                  onClick={() => {
+                    console.log("ClearIcon  clicked");
+                    clearExp(exp)
+                  }} 
+                  /></li>
+                ))}
+             
             </ul>
           </div>
           <Button
-            sx={{ cursor: "pointer" }}
+            sx={{ cursor: "pointer"}}
             onClick={() => {
               console.log("edit button clicked");
               setOpenExperience(true);
             }}
           >
-            <EditIcon />
+            <AddCircleOutlineIcon />
           </Button>
         </div>
       </Box>
@@ -693,7 +734,8 @@ function Profile({ userdata, setUserUpdate, mode, setMode }) {
         sx={{
           marginLeft: "350px",
           width: "800px",
-          height: "100px",
+          minHeight: "70px",
+          maxHeight:"auto",
           bgcolor: "background.default",
         }}
       >
@@ -708,9 +750,15 @@ function Profile({ userdata, setUserUpdate, mode, setMode }) {
           <div>
             <h3>Education</h3>
             <ul>
-              <li>{userdata?.education}</li>
-              {/* <li>PG Diploma in Industrial Automation</li> */}
-              {/* <li>CCNA</li> */}
+            {userdata.education?.map((edu)=>(
+              <li key={edu}>{edu} <ClearIcon
+              sx={{ cursor:"pointer"}}
+              onClick={() => {
+                console.log("ClearIcon  clicked");
+                clearEdu(edu)
+              }} 
+              /></li>
+            ))}
             </ul>
           </div>
           <Button
@@ -721,7 +769,7 @@ function Profile({ userdata, setUserUpdate, mode, setMode }) {
 
             }}
           >
-            <EditIcon />
+            <AddCircleOutlineIcon />
           </Button>
         </div>
       </Box>
@@ -730,7 +778,8 @@ function Profile({ userdata, setUserUpdate, mode, setMode }) {
         sx={{
           marginLeft: "350px",
           width: "800px",
-          height: "100px",
+          minHeight: "70px",
+          maxHeight:"auto",
           bgcolor: "background.default",
         }}
       >
@@ -745,8 +794,15 @@ function Profile({ userdata, setUserUpdate, mode, setMode }) {
           <div>
             <h3>Skills</h3>
             <ul>
-              <li>{userdata?.skills}</li>
-              {/* <li>Web Development</li> */}
+            {userdata.skills?.map((skill)=>(
+                  <li key={skill}>{skill} <ClearIcon
+                  sx={{ cursor:"pointer"}}
+                  onClick={() => {
+                    console.log("ClearIcon  clicked");
+                    clearSkill(skill)
+                  }} 
+                  /></li>
+                ))}
             </ul>
           </div>
           <Button
@@ -757,7 +813,7 @@ function Profile({ userdata, setUserUpdate, mode, setMode }) {
 
             }}
           >
-            <EditIcon />
+            <AddCircleOutlineIcon />
           </Button>
         </div>
       </Box>

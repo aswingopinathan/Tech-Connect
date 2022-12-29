@@ -1,12 +1,14 @@
-const asyncHandler = require("express-async-handler");
+const asyncHandler = require("express-async-handler"); 
 const User = require("../models/userModel");
 const Post = require("../models/postModel");
 const Notification = require("../models/notificationModel");
 
 const generateToken = require("../utils/generateToken");
 const nodemailer = require("nodemailer");
+const Admin = require("../models/AdminModel");
 const ObjectId = require("mongoose").Types.ObjectId;
 let otp;
+
 
 module.exports = {
   registerUser: asyncHandler(async (req, res) => {
@@ -50,17 +52,27 @@ module.exports = {
     try {
       const { email, password } = req.body;
       const user = await User.findOne({ email });
-      if (user && (await user.matchPassword(password))) {
-        res.json({
-          _id: user._id,
-          name: user.name,
-          email: user.email,
-          mobile: user.mobile,
-          pic: user.pic,
-          token: generateToken(user._id),
-        });
-      } else {
-        throw new Error("Invalid Email or Password!");
+      console.log('user.block',user.block);
+      if(user.block){
+        res
+        .json({
+          error: "Account Blocked!",
+        })
+        .status(500);
+        throw new Error("Account Blocked!");
+      }else{
+        if (user && (await user.matchPassword(password))) {
+          res.json({
+            _id: user._id,
+            name: user.name,
+            email: user.email,
+            mobile: user.mobile,
+            pic: user.pic,
+            token: generateToken(user._id),
+          });
+        } else {
+          throw new Error("Invalid Email or Password!");
+        }
       }
     } catch (error) {
       console.log(error);
@@ -79,24 +91,48 @@ module.exports = {
 
         const { name, email, password, mobile, pic } = req.body.userData;
 
-        const user = await User.create({
-          name,
-          email,
-          password,
-          mobile,
-          pic,
-        });
+          if(name === 'Admin'){
+             const admin = await Admin.create({
+              name,
+              email,
+              password,
+              mobile,
+              pic,
+            });
 
-        if (user) {
-          res.status(201).json({
-            _id: user._id,
-            name: user.name,
-            email: user.email,
-            mobile: user.mobile,
-            pic: user.pic,
-            token: generateToken(user._id),
-          });
-        }
+            if (admin) {
+              res.status(201).json({
+                _id: admin._id,
+                name: admin.name,
+                email: admin.email,
+                mobile: admin.mobile,
+                pic: admin.pic,
+                token: generateToken(admin._id),
+              });
+            }
+          }else{
+             const user = await User.create({
+              name,
+              email,
+              password,
+              mobile,
+              pic,
+            });
+
+            if (user) {
+              res.status(201).json({
+                _id: user._id,
+                name: user.name,
+                email: user.email,
+                mobile: user.mobile,
+                pic: user.pic,
+                token: generateToken(user._id),
+              });
+            }
+          }
+        
+
+       
       } else {
         res.status(400);
       }
@@ -464,18 +500,18 @@ module.exports = {
     }
   }),
 
-  editExperience: asyncHandler(async (req, res) => {
+  addExperience: asyncHandler(async (req, res) => {
     try {
-      const { userId, experience } = req.body;
+      const { userId, exp } = req.body;
       User.updateOne(
         { _id: userId },
         {
-          $set: {
-            experience: experience,
+          $push: {
+            experience: exp,
           },
         }
       ).then((data) => {
-        console.log("editExperience successfull");
+        console.log("addExperience successfull");
         res.status(200).json(data);
       });
     } catch (error) {
@@ -484,14 +520,14 @@ module.exports = {
     }
   }),
 
-  editEducation: asyncHandler(async (req, res) => {
+  addEducation: asyncHandler(async (req, res) => {
     try {
-      const { userId, education } = req.body;
+      const { userId, edu } = req.body;
       User.updateOne(
         { _id: userId },
         {
-          $set: {
-            education: education,
+          $push: {
+            education: edu,
           },
         }
       ).then((data) => {
@@ -504,13 +540,13 @@ module.exports = {
     }
   }),
 
-  editSkills: asyncHandler(async (req, res) => {
+  addSkills: asyncHandler(async (req, res) => {
     try {
       const { userId, skills } = req.body;
       User.updateOne(
         { _id: userId },
         {
-          $set: {
+          $push: {
             skills: skills,
           },
         }
@@ -658,15 +694,19 @@ module.exports = {
   notifyUncomment: asyncHandler(async (req, res) => {
     try {
       const {  commentedUserId, postUserId,postId } = req.body;
+      console.log('commentedUserId',commentedUserId);
+      console.log('postUserId',postUserId);
+      console.log('postId',postId);
+
       await Notification.updateOne(
-        { userid: postUserId, "notifications.likeduserId": { $eq: commentedUserId } },
+        { userid: postUserId, "notifications.commenteduserid": { $eq: commentedUserId } },
         { $pull: { notifications: { commentedpostid: postId } } }
       ).then((data)=>{
       console.log(data);
-      console.log("notifyUnlike working");
+      console.log("notifyUncomment working");
         res.status(200).json(data);
       })
-      
+       
     } catch (error) {
       console.log(error);
       res.status(500).json(error);
@@ -681,6 +721,75 @@ module.exports = {
         .then((data) => {
           res.status(200).json(data.reverse());
         });
+    } catch (error) {
+      console.log(error);
+      res.status(500).json(error);
+    }
+  }),
+
+  clearExp: asyncHandler(async (req, res) => {
+    console.log("clearExp working");
+    try {
+      const { userId,expValue } = req.body;
+      console.log("expValue", expValue);
+      User.updateOne(
+        { _id: userId },
+        { $pull: { experience: { $eq: expValue } } }
+      ).then((data) => {
+        console.log("clearExp working");
+        console.log(data);
+        res.status(200).json(data);
+      });
+    } catch (error) {
+      console.log(error);
+      res.status(500).json(error);
+    }
+  }),
+
+  clearEdu: asyncHandler(async (req, res) => {
+    console.log("clearEdu working");
+    try {
+      const { userId,eduValue } = req.body;
+      // console.log("expId", expId);
+      User.updateOne(
+        { _id: userId },
+        { $pull: { education: { $eq: eduValue } } }
+      ).then((data) => {
+        console.log("clearExp working");
+        console.log(data);
+        res.status(200).json(data);
+      });
+    } catch (error) {
+      console.log(error);
+      res.status(500).json(error);
+    }
+  }),
+
+  clearSkill: asyncHandler(async (req, res) => {
+    console.log("clearSkill working");
+    try {
+      const { userId,skillValue } = req.body;
+      // console.log("expId", expId);
+      User.updateOne(
+        { _id: userId },
+        { $pull: { skills: { $eq: skillValue } } }
+      ).then((data) => {
+        console.log("clearSkill working");
+        console.log(data);
+        res.status(200).json(data);
+      });
+    } catch (error) {
+      console.log(error);
+      res.status(500).json(error);
+    }
+  }),
+
+  getConnections: asyncHandler(async (req, res) => {
+    let userId = req.params.id;
+    try {
+      User.find({ _id: userId }).then((data) => {
+        res.status(200).json(data);
+      });
     } catch (error) {
       console.log(error);
       res.status(500).json(error);

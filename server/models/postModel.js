@@ -13,6 +13,7 @@ const postSchema = mongoose.Schema({
   video: { type: String },
   likes: [{ type: String }],
 
+  
   comments: [
     {
       userId: {

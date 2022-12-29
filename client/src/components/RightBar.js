@@ -79,7 +79,7 @@ function RightBar() {
   //   setChatLoader(Math.random())
   //   navigate("/chat");
   // };
-
+// console.log('users',users);
   return (
     <>
       <Box
@@ -105,8 +105,8 @@ function RightBar() {
               marginTop: "1rem",
             }}
           >
-            {users.map((usersall, index) => ( 
-              <div key={index}>
+            {users.map((usersall) => ( 
+              <div key={usersall._id}>
                 {usersall.connectionIds.includes(userId)?(<></>):(<><ListItem alignItems="flex-start">
                   <ListItemAvatar>
                     {usersall._id === userId?(

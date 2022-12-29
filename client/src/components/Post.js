@@ -82,12 +82,7 @@ function Post({ post, setLiked }) {
       )
       .then(async() => {
         setLiked(Math.random());
-        // await axios.post('/notifylike',
-        // {
-        //   userid: userData._id,
-        //   postid: post._id,
-        //   name: userData.name,
-        // },config)
+       
       });
   };
 
@@ -159,8 +154,8 @@ function Post({ post, setLiked }) {
       });
   };
 
-  const removecomment = async (postCommentId,postUserId,postId) => {
-    console.log('userId',postUserId);
+  const removecomment = async (postCommentId,postId) => {
+    console.log('userId',userId);
     console.log('postId',postId);
     console.log('commentId',postCommentId);
  
@@ -168,7 +163,7 @@ function Post({ post, setLiked }) {
       .post(
         "/removecomment",
         {
-          userId: postUserId,
+          userId: userId,
           postId: postId,
           commentId: postCommentId,
         },
@@ -255,8 +250,12 @@ function Post({ post, setLiked }) {
           )
           };
 
-          const uncommentNotify = async (commentedUserId,postId,postUserId) => {
-            console.log("uncommentNotify working");
+          const uncommentNotify = async (commentedUserId,postUserId,postId) => {
+            // console.log("uncommentNotify working");
+            // console.log('commentedUserId',commentedUserId);
+            // console.log('postId',postId);
+            // console.log('postUserId',postUserId);
+
             await axios
             .post(
               "/notifyuncomment",
@@ -507,12 +506,13 @@ function Post({ post, setLiked }) {
                     <MenuItem onClick={handleClose}>Edit</MenuItem>
                     <MenuItem
                       onClick={() => {
-                        // console.log('allcomment._id',allcomment._id);
-                        // console.log('post.userId._id',post.userId._id);
-                        // console.log('post._id',post._id);
+                        console.log('allcomment._id',allcomment._id);
+                        console.log('post.userId._id',post.userId._id);
+                        console.log('post._id',post._id);
                         
-                        removecomment(allcomment._id,post.userId._id,post._id)
-                        // uncommentNotify(userId,post.userId._id,post._id)
+                        removecomment(allcomment._id,post._id)
+                        uncommentNotify(userId,post.userId._id,post._id)
+
                       }}
                     >
                       Delete

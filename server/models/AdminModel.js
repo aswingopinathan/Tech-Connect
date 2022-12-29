@@ -1,7 +1,7 @@
 const mongoose=require('mongoose');
 const bcrypt=require('bcryptjs')
 
-const userSchema=mongoose.Schema(
+const adminSchema=mongoose.Schema(
     {
         name:{
             type:String,
@@ -25,35 +25,14 @@ const userSchema=mongoose.Schema(
             required:true,
             default:"https://icon-library.com/images/anonymous-avatar-icon/anonymous-avatar-icon-25.jpg"
         },
-        jobPosition:{
-            type:String
-        },
-        connectionIds:[{type:String}],
-        jobStatus:{
-            type:String
-        },
-        about:{
-            type:String
-        },
-        block:{
-            type:Boolean
-        },
-        experience:[{type:String}],
-        education:[{type:String}],
-        skills:[{type:String}],
-        resume:{
-            type:String
-        },
-        place:{
-            type:String
-        },
+       
     },
     {
         timestamps: true,
     }
 );
 
-userSchema.pre('save',async function (next){
+adminSchema.pre('save',async function (next){
     if(!this.isModified('password')){
         next();
     }
@@ -62,10 +41,10 @@ userSchema.pre('save',async function (next){
     this.password=await bcrypt.hash(this.password,salt);
 }); 
 
-userSchema.methods.matchPassword = async function(enteredPassword){
+adminSchema.methods.matchPassword = async function(enteredPassword){
     return await bcrypt.compare(enteredPassword,this.password);
 }
 
-const User=mongoose.model('User',userSchema);
+const Admin=mongoose.model('Admin',adminSchema);
 
-module.exports=User;
+module.exports=Admin;

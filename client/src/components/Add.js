@@ -215,6 +215,7 @@ function Add() {
           >
             Create post
           </Typography>
+          
           <UserBox>
             <Avatar src={imageUrl} sx={{ width: 30, height: 30 }} />
             <Typography fontWeight={500} variant="span">

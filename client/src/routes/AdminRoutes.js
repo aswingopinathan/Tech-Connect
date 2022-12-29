@@ -1,7 +1,8 @@
 import React from "react";
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
-import AdminHomePage from "../Pages/Admin/AdminHomePage";
-import AdminSignInPage from "../Pages/Admin/AdminSignInPage";
+import HomePage from "../Pages/Admin/HomePage";
+import SignInPage from "../Pages/Admin/SignInPage";
+import UsersPage from "../Pages/Admin/UsersPage";
 import AdminAuthRoutes from "../ProtectedRoutes/AdminAuthRoutes";
 import AdminUnauth from "../ProtectedRoutes/AdminUnauth";
 
@@ -12,11 +13,13 @@ function AdminRoutes() {
         <Routes>
 
         <Route element={<AdminUnauth/>}>
-          <Route path="/admin" element={<AdminSignInPage />} />
+          <Route path="/admin" element={<SignInPage />} />
           </Route>
 
           <Route element={<AdminAuthRoutes/>}>
-          <Route path="/admin/home" element={<AdminHomePage/>} />
+          <Route path="/admin/home" element={<HomePage/>} />
+          <Route path="/admin/users" element={<UsersPage/>} />
+
           </Route>
 
         </Routes>
