@@ -49,21 +49,6 @@ const getMyConnections = async (userId) => {
       <Box position={"fixed"}>
       <List>
         
-      <ListItem disablePadding>
-            <ListItemButton component="a" href="#">
-              <ListItemIcon>
-                <PeopleIcon/>
-              </ListItemIcon>
-              <ListItemText primary="Connections"
-               onClick={()=>{
-                // {handleOpen}
-                setOpen(true);
-                getMyConnections(userId);
-               }}
-
-               />
-            </ListItemButton>
-          </ListItem>
 
           <ListItem disablePadding>
             <ListItemButton >
@@ -118,9 +103,6 @@ const getMyConnections = async (userId) => {
                   </div>
             </div>
           ))}
-                  
-          
-         
         </Box>
       </Modal>
     </Box>

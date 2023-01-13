@@ -1,29 +1,14 @@
 const generateToken = require("../utils/generateToken");
 const asyncHandler = require("express-async-handler");
-// const User = require("../models/userModel");
 const Admin = require("../models/AdminModel");
 const User = require("../models/userModel");
 
 
 module.exports = { 
 
-  // authAdmin : asyncHandler((req, res) => {
-  //   // console.log("working");
-  //   const credentials = { email: "admin@gmail.com" };
-  //   const { email, password } = req.body;
-  //   if (credentials.email === email && process.env.ADMIN_PASS === password) {
-  //     res.json({ email: email });
-  //   } else {
-  //     res.status(400);
-  //     throw new Error("Invalid Email or Password!");
-  //   }
-  // }),
-
   authAdmin: asyncHandler(async (req, res) => {
     try {
       const { email, password } = req.body;
-      // console.log('email',email);
-      // console.log('password',password);
 
       const admin = await Admin.findOne({ email });
       if (admin && (await admin.matchPassword(password))) {

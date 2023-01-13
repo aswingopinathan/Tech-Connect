@@ -11,6 +11,7 @@ import OtpPage from "../Pages/Client/OtpPage";
 import ProfilePage from "../Pages/Client/ProfilePage";
 import ChatPage from "../Pages/Chat/Chat"
 import ViewProfilePage from "../Pages/Client/ViewProfilePage";
+import NotFoundPage from "../Pages/Client/NotFoundPage";
 
 function UserRoutes() {
   return (
@@ -33,6 +34,7 @@ function UserRoutes() {
 
 
             <Route path="/chat" element={<ChatPage />} />
+            <Route path="/page404" element={<NotFoundPage />} />
 
           </Route>
         </Routes>

@@ -19,6 +19,7 @@ import DeleteIcon from '@mui/icons-material/Delete';
 import ClearIcon from '@mui/icons-material/Clear';
 
 function Profile({ userdata, setUserUpdate, mode, setMode }) {
+  
   const{setUpdateNav}=useContext(UserContext)
 
   const style = {

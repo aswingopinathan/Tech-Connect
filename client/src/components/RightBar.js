@@ -8,13 +8,10 @@ import Divider from "@mui/material/Divider";
 import List from "@mui/material/List";
 import { getAllUsers } from "../api/UserRequest";
 import axios from "axios";
-// import { UserContext } from "../context/Context";
-// import MessageIcon from "@mui/icons-material/Message";
 import { Link, useNavigate } from "react-router-dom";
 import EmailIcon from "@mui/icons-material/Email";
 import { UserContext } from "../context/Context";
 import { findChat } from "../api/ChatRequest";
-// import { Stack } from "@mui/system";
 
 function RightBar() {
   const { setChatLoader } = useContext(UserContext)
@@ -29,7 +26,6 @@ function RightBar() {
     const allUsers = async (userId) => {
       try {
         let { data } = await getAllUsers(userId);
-        // console.log("rightbar incoming data", data);
         setUsers(data);
       } catch (error) {
         console.log(error);
@@ -75,11 +71,7 @@ function RightBar() {
     );
   };
 
-  // const redirectToChat = () => {
-  //   setChatLoader(Math.random())
-  //   navigate("/chat");
-  // };
-// console.log('users',users);
+  
   return (
     <>
       <Box
@@ -208,9 +200,7 @@ function RightBar() {
                           {usersall.connectionIds.includes(userId) ? (
                             <Button
                               onClick={() => {
-                                // redirectToChat();
                                 findChat(userId,usersall._id).then((data)=>{
-                                  // console.log("chat",data.data);
                                   navigate('/chat',{ state : {chat : data.data}})
                                 })
                               }}

@@ -1,5 +1,4 @@
-import React, { useEffect, useState } from "react";
-// import UserHeader from "../../components/UserHeader";
+import React, { useState } from "react";
 import Feed from "../../components/Feed";
 import RightBar from "../../components/RightBar";
 import SideBar from "../../components/SideBar";
@@ -8,7 +7,6 @@ import { Stack } from "@mui/system";
 import NavBar from "../../components/NavBar";
 import Add from "../../components/Add";
 import { createTheme, ThemeProvider } from "@mui/material";
-// import { getUser } from "../../api/UserRequest";
 
 function UserPage() {
 

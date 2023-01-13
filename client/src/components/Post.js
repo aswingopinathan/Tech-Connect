@@ -1,4 +1,4 @@
-import React, { useEffect } from "react";
+import React, { useEffect, useRef } from "react";
 import {
   Avatar,
   Card,
@@ -11,10 +11,10 @@ import {
   Typography,
   Menu,
   MenuItem,
+  Grid,
 } from "@mui/material";
 import SendIcon from "@mui/icons-material/Send";
 import TextField from "@mui/material/TextField";
-// import ShareIcon from "@mui/icons-material/Share";
 import MoreVertIcon from "@mui/icons-material/MoreVert";
 import Favorite from "@mui/icons-material/Favorite";
 import FavoriteBorder from "@mui/icons-material/FavoriteBorder";
@@ -25,13 +25,40 @@ import Collapse from "@mui/material/Collapse";
 import { format } from "timeago.js";
 import { getUser } from "../api/UserRequest";
 import { Link, useNavigate } from "react-router-dom";
-// import { UserContext } from "../context/Context";
+// 
+import CloseIcon from "@mui/icons-material/Close";
+import {io} from 'socket.io-client'
 
+import Box from '@mui/material/Box';
+import Modal from '@mui/material/Modal';
+const style = {
+  position: 'absolute',
+  top: '50%',
+  left: '50%',
+  transform: 'translate(-50%, -50%)',
+  width: 400,
+  bgcolor: 'background.paper',
+  border: '2px solid #000',
+  boxShadow: 24,
+  p: 4,
+};
+// 
 function Post({ post, setLiked }) {
-  // const { setUniquePost } = useContext(UserContext)
+  // 
+  const socket = useRef()
+// 
+  // 
+  const [editpost,setEditPost] = useState('')
+  const [openpost, setOpenPost] = React.useState(false);
+  const [postId,setPostId] = useState('')
+  const handleOpenPost = (postId) => {
+    setOpenPost(true)
+    setPostId(postId)
+  };
+  const handleClosePost = () => setOpenPost(false);
+  // 
   const navigate = useNavigate();
 
-  // const userData = JSON.parse(localStorage.getItem("userInfo"));
   let token = JSON.parse(localStorage.getItem("userInfo"))?.token;
   var userId = JSON.parse(localStorage.getItem("userInfo"))?._id;
 
@@ -176,9 +203,7 @@ function Post({ post, setLiked }) {
   };
 
   const connectUser = async (id) => {
-    // console.log('connectuser working');
-    // console.log('id',id);
-    // console.log('userData._id',userData._id);
+   
     await axios
       .post(
         "/connectuser",
@@ -218,7 +243,17 @@ function Post({ post, setLiked }) {
           likedUsername: likedUsername,
         },
         config
-      )
+      ).then(()=>{
+        let socketData = {
+          name: userData.name,
+          pic: userData.pic,
+          action: "liked",
+          time: Date.now(),
+          postOwnerId: postUserId,
+        }
+         socket.current = io("http://localhost:8800");
+        socket.current.emit("send-notifications", socketData)
+      })
       };
 
       const unlikeNotify = async (likedUserId,postId,postUserId) => {
@@ -230,7 +265,6 @@ function Post({ post, setLiked }) {
             likedUserId: likedUserId,
             postId: postId,
             postUserId: postUserId,
-            // likedUsername: likedUsername,
           },
           config
         )
@@ -251,11 +285,6 @@ function Post({ post, setLiked }) {
           };
 
           const uncommentNotify = async (commentedUserId,postUserId,postId) => {
-            // console.log("uncommentNotify working");
-            // console.log('commentedUserId',commentedUserId);
-            // console.log('postId',postId);
-            // console.log('postUserId',postUserId);
-
             await axios
             .post(
               "/notifyuncomment",
@@ -270,9 +299,83 @@ function Post({ post, setLiked }) {
 
      // axios requests end
 
-// console.log('incoming post',post);
+// 
+const handlePost = async () => {
+  console.log("handlePost working");
+  await axios
+    .post(
+      "/editpost",
+      {
+        postId: postId,
+        editpost: editpost,
+      },
+      config
+    )
+    .then(() => { 
+      console.log('editPost successfull');
+      setOpenPost(false);
+      setLiked(Math.random());
+    });
+};
+// 
   return (
+
     // main card post start
+    <>
+    {/*  */}
+    <Modal
+        open={openpost}
+        onClose={handleClosePost}
+        aria-labelledby="modal-modal-title"
+        aria-describedby="modal-modal-description"
+      >
+        <Box sx={style}>
+          <div style={{ display: "flex", justifyContent: "end" }}>
+            <Button onClick={handleClosePost}>
+              <CloseIcon />
+            </Button>
+          </div>
+          <div style={{ display: "flex", justifyContent: "center" }}>
+            <Typography
+              id="modal-modal-title"
+              variant="h6"
+              component="h2"
+              color={"text.primary"}
+            >
+              Edit Post
+            </Typography>
+          </div>
+
+          <Grid container spacing={2}>
+            <Grid item xs={12}>
+              <TextField
+                id="standard-basic" 
+                label="Description"
+                variant="standard"
+                value={editpost}
+  // about=userdata.about
+                multiline
+                fullWidth
+                required
+                onChange={(e) => setEditPost(e.target.value)}
+              ></TextField>
+            </Grid>
+          </Grid>
+
+          <div
+            style={{
+              display: "flex",
+              justifyContent: "end",
+              paddingTop: "10px",
+            }}
+            >
+            <Button variant="contained" onClick={handlePost}>
+              save
+            </Button>
+          </div>
+        </Box>
+      </Modal>
+      {/*  */}
     <Card
       sx={{
         margin: 2,
@@ -326,7 +429,11 @@ function Post({ post, setLiked }) {
               >
                 {userId === post.userId._id ? (
                   <div>
-                    <MenuItem onClick={handleClose}>Edit</MenuItem>
+                    <MenuItem 
+                    // onClick={handleClose}
+                    onClick={()=>{handleOpenPost(post._id)
+                      handleClose()}}
+                    >Edit</MenuItem>
                     <MenuItem onClick={removepost}>Delete</MenuItem>
                   </div>
                 ) : (
@@ -348,14 +455,7 @@ function Post({ post, setLiked }) {
           {post?.description}
         </Typography>
       </CardContent>
-      {/* <CardMedia
-        component="img"
-        // height="20%"
-        width='800px' height='400px'
-        style={{"object-fit":"contain"}}
-        image={post?.image}
-        alt="Paella dish"
-      /> */}
+     
       {post.image ? (
         <CardMedia
           component="img"
@@ -398,16 +498,13 @@ function Post({ post, setLiked }) {
             aria-label="add to favorites"
             onClick={() => {
               like();
-              console.log('userId',userId);
-              console.log('post._id',post._id);
-              console.log('post.userId._id',post.userId._id);
-              console.log('userData.name',userData.name);
               likeNotify(userId,post._id,post.userId._id,userData.name)
             }}
           >
             <FavoriteBorder />
           </IconButton>
         )}
+        {post.comments.length ? <span>{post.comments.length}</span> : ""}
 
         <IconButton
           aria-label="share"
@@ -418,9 +515,6 @@ function Post({ post, setLiked }) {
           <CommentIcon />
         </IconButton>
 
-        {/* <IconButton aria-label="share">
-          <ShareIcon />
-        </IconButton> */}
         
       </CardActions>
 
@@ -430,9 +524,6 @@ function Post({ post, setLiked }) {
         unmountOnExit
         sx={{ minHeight: "200px",
          maxHeight: "400px",
-        //  scrollbar: {
-        //   display: 'none'
-        // },
           overflowY: "scroll" }}
       >
         {/* comment card start */}
@@ -440,8 +531,7 @@ function Post({ post, setLiked }) {
           <CardHeader
             avatar={<Avatar aria-label="recipe" src={userData.pic}></Avatar>}
             title={userData.name}
-            // subheader="September 14, 2022"
-            // subheader={post?.date}
+            
             minheight="40px"
             maxheight="80px"
           />
@@ -503,13 +593,9 @@ function Post({ post, setLiked }) {
                       "aria-labelledby": "basic-button",
                     }}
                   >
-                    <MenuItem onClick={handleClose}>Edit</MenuItem>
+                    {/* <MenuItem onClick={handleClose}>Edit</MenuItem> */}
                     <MenuItem
                       onClick={() => {
-                        console.log('allcomment._id',allcomment._id);
-                        console.log('post.userId._id',post.userId._id);
-                        console.log('post._id',post._id);
-                        
                         removecomment(allcomment._id,post._id)
                         uncommentNotify(userId,post.userId._id,post._id)
 
@@ -537,7 +623,10 @@ function Post({ post, setLiked }) {
         {/* db card end */}
       </Collapse>
     </Card>
+    </>
     // main card post end
+
+    
   );
 }
 

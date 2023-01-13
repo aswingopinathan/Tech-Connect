@@ -20,7 +20,7 @@ module.exports = {
         try {
             const chat = await ChatModel.find({
                 members: {$in: [req.params.userId]}
-            })
+            }).sort({updatedAt:-1})
             console.log('chat',chat);
             res.status(200).json(chat)
         } catch (error) {
@@ -48,5 +48,6 @@ module.exports = {
         } catch (error) {
             res.status(500).json(error)
         }
-    })
+    }),
+
 }

@@ -17,8 +17,8 @@ function AdminRoutes() {
           </Route>
 
           <Route element={<AdminAuthRoutes/>}>
-          <Route path="/admin/home" element={<HomePage/>} />
-          <Route path="/admin/users" element={<UsersPage/>} />
+          <Route path="/admin/home" element={<UsersPage/>} />
+          {/* <Route path="/admin/users" element={<UsersPage/>} /> */}
 
           </Route>
 

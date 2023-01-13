@@ -10,7 +10,6 @@ function Feed() {
   const{trigger}=useContext(UserContext)
   const [posts,setPosts] = useState([]);
 const [liked,setLiked] = useState(false);
-// const [uniquePost,setUniquePost] = useState(false)
   let token = JSON.parse(localStorage.getItem("userInfo"))?.token;
 
  const { uniquePost } = useContext(UserContext)
@@ -31,11 +30,6 @@ const [liked,setLiked] = useState(false);
         setPosts(data.data)
       })
     }
-    // axios.get('/getpost',config).then((data)=>{
-    //   setPosts(data.data)
-    // })
-
-    
 
      // eslint-disable-next-line 
   },[liked,trigger,uniquePost])

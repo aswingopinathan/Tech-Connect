@@ -159,7 +159,6 @@ useEffect(()=>{
               verify
             </Button>
             <Grid container>
-              {/* {counter!=0?<span>Resend otp in 00: {counter}</span>:""} */}
               {counter===0?<Grid item xs>
                 <Link variant="body2" onClick={resendOtp}
                 sx={{cursor:"pointer"}}>

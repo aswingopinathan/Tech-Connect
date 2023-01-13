@@ -47,6 +47,10 @@ const Icons = styled(Box)(({ theme }) => ({
 }));
 
 function NavBar({ mode, setMode }) {
+  // 
+  const [notifications,setNotifications] = useState([])
+  const notifCount = useRef(0)
+  // 
   
   const { updateNav, setUniquePost } = useContext(UserContext);
 
@@ -67,7 +71,6 @@ function NavBar({ mode, setMode }) {
     };
     getUserData();
   }, [updateNav]);
-  // console.log('userData.name',userData?.name);
 
   const [anchorEl, setAnchorEl] = React.useState(null);
   const newopen = Boolean(anchorEl);
@@ -90,9 +93,9 @@ function NavBar({ mode, setMode }) {
     setAnchorE2(null);
   };
 
-  // console.log('query',query);
 
   let token = JSON.parse(localStorage.getItem("userInfo"))?.token;
+  
   const config = {
     headers: {
       "Content-Type": "application/json",
@@ -104,13 +107,19 @@ function NavBar({ mode, setMode }) {
     console.log("queryinput", queryinput);
     try {
       if(queryinput){
-        let { data } = await axios.get(`/search/${queryinput}`, config);
-      // console.log("data",data);
-        [data] = data;
+        let { data } = await axios.get(`/search/${queryinput}/${userId}`, config);
+        if(data.length === 0){
+          console.log('c1 working');
+      setDataReceived('No user found');
+        }else{
+          console.log('c2 working');
+
+          [data] = data;
+          setDataReceived(data);
+        }
 
 
-      setDataReceived(data);
-      if (queryinput.length > 4) {
+      if (queryinput.length > 4 && data._id) {
         setAnchorE2(true);
       } else {
         setAnchorE2(false);
@@ -125,13 +134,7 @@ function NavBar({ mode, setMode }) {
   const socket = useRef();
   useEffect(() => {
     socket.current = io("http://localhost:8800");
-    socket.current.emit("new-user-add", userId);
-    socket.current.on("get-users", (users) => {
-      // setOnlineUsers(users)
-      // console.log('onlineUsers',onlineUsers);
-      // console.log("for socket to work");
-    });
-  }, [userId]);
+  }, []);
 
   const [notify,setNotify] = useState("");
   const [myNotify,setMyNotify] = useState([])
@@ -141,10 +144,6 @@ function NavBar({ mode, setMode }) {
     const getNotifications = async () => {
       try {
         const { data } = await findNotify(userId);
-        // console.log('notify',data);
-        // console.log('data.notifications',data.notifications);
-        // console.log('data.notifications',data.notifications);
-
 
         setNotify(data);
         setMyNotify(data.notifications)
@@ -154,7 +153,6 @@ function NavBar({ mode, setMode }) {
     };
     getNotifications();
   }, [updateNotify]);
-// console.log('notify.notifications.length',notify?.notifications?.length);
 
   const clearNotification = async()=>{
     await axios.post('/clearnotify',{
@@ -165,6 +163,16 @@ function NavBar({ mode, setMode }) {
 
     })
   }
+
+  // 
+  useEffect(() => {
+    socket.current.on("receive-notification", (notification) => {
+      setNotifications((prev) => [notification, ...prev]);
+      notifCount.current += 1;
+    });
+  }, []);
+  // 
+console.log('notifCount.current',notifCount.current);
   return (
     <AppBar position="sticky">
       <StyledToolbar>
@@ -179,7 +187,6 @@ function NavBar({ mode, setMode }) {
         />
         <SearchIcon
           sx={{ display: { xs: "block", sm: "none" }, cursor: "pointer" }}
-          // onClick={}
         />
 
         <Search sx={{ padding: "0px", display: { xs: "none", sm: "block" } }}>
@@ -195,7 +202,6 @@ function NavBar({ mode, setMode }) {
             />
             <Menu
                 id="basic-menu"
-                // anchorE2={anchorE2}
                 anchorReference="anchorPosition"
                 anchorPosition={{ top: 60, left: 530 }}
                 open={newopen1}
@@ -204,19 +210,28 @@ function NavBar({ mode, setMode }) {
                   "aria-labelledby": "basic-button",
                 }}
               >
-                <MenuItem
+                {(dataReceived === 'user not found')?(<MenuItem
                 sx={{width:"400px"}}
                 > 
                   <ListItemAvatar>
-                    <Link
-                      to="/viewprofile"
-                      state={{ userId: dataReceived._id }}
-                    >
-                      <Avatar alt="" src={dataReceived.pic} />
-                    </Link>
+                  <Avatar alt="" src={dataReceived.pic} />
                   </ListItemAvatar>
-                  <ListItemText primary={dataReceived.name} />
-                </MenuItem>
+                  <ListItemText primary={dataReceived} />
+                </MenuItem>):(
+                  <MenuItem
+                  sx={{width:"400px"}}
+                  > 
+                    <ListItemAvatar>
+                      <Link
+                        to="/viewprofile"
+                        state={{ userId: dataReceived._id }}
+                      >
+                        <Avatar alt="" src={dataReceived.pic} />
+                      </Link>
+                    </ListItemAvatar>
+                    <ListItemText primary={dataReceived.name} />
+                  </MenuItem>
+                )}
               </Menu>
            </div>
           ) : (
@@ -226,7 +241,6 @@ function NavBar({ mode, setMode }) {
                 sx={{
                   paddingLeft: "10px",
                   width: "100%",
-                  // position:"relative"
                 }}
                 borderradius="40px"
                 onChange={(e) => {
@@ -238,7 +252,6 @@ function NavBar({ mode, setMode }) {
 
               <Menu
                 id="basic-menu"
-                // anchorE2={anchorE2}
                 anchorReference="anchorPosition"
                 anchorPosition={{ top: 60, left: 530 }}
                 open={newopen1}
@@ -247,19 +260,28 @@ function NavBar({ mode, setMode }) {
                   "aria-labelledby": "basic-button",
                 }}
               >
-                <MenuItem
+                 {(dataReceived === 'user not found')?(<MenuItem
                 sx={{width:"400px"}}
                 > 
                   <ListItemAvatar>
-                    <Link
-                      to="/viewprofile"
-                      state={{ userId: dataReceived._id }}
-                    >
-                      <Avatar alt="" src={dataReceived.pic} />
-                    </Link>
+                  <Avatar alt="" src={dataReceived.pic} />
                   </ListItemAvatar>
-                  <ListItemText primary={dataReceived.name} />
-                </MenuItem>
+                  <ListItemText primary={dataReceived} />
+                </MenuItem>):(
+                  <MenuItem
+                  sx={{width:"400px"}}
+                  > 
+                    <ListItemAvatar>
+                      <Link
+                        to="/viewprofile"
+                        state={{ userId: dataReceived._id }}
+                      >
+                        <Avatar alt="" src={dataReceived.pic} />
+                      </Link>
+                    </ListItemAvatar>
+                    <ListItemText primary={dataReceived.name} />
+                  </MenuItem>
+                )}
               </Menu>
 
               {/*  */}
@@ -280,19 +302,7 @@ function NavBar({ mode, setMode }) {
             <HomeIcon />
           </Badge>
 
-          {/* <Badge badgeContent={2}
-          color="error"
-          sx={{ cursor: "pointer" }}
-            onClick={(e) => {
-              navigate("/user");
-            }}
-          >
-            <PeopleIcon />
-          </Badge> */}
-
-          {/* <Badge>
-            <WorkIcon />
-          </Badge> */}
+          
 
           <Badge
             // badgeContent={4}
@@ -305,7 +315,11 @@ function NavBar({ mode, setMode }) {
             <Mail />
           </Badge>
 
-          <Badge badgeContent={notify?.notifications?.length} color="error"
+          <Badge 
+          badgeContent={notify?.notifications?.length}
+          // badgeContent={notifCount.current}
+
+           color="error"
            sx={{ cursor: "pointer" }}
            onClick={() => {
             console.log('notification clicked');
@@ -332,9 +346,6 @@ function NavBar({ mode, setMode }) {
                 <MenuItem
                 sx={{width:"300px"}}
                 onClick={()=>{
-                  // console.log('nmessages.commentedpostid',nmessages.commentedpostid);
-                  // console.log('nmessages.likedpostid',nmessages.likedpostid);
-
                   setUniquePost(nmessages.likedpostid || nmessages.commentedpostid)
                    setAnchorEl(null);
 
@@ -407,7 +418,6 @@ function NavBar({ mode, setMode }) {
         >
           Profile
         </MenuItem>
-        {/* <MenuItem >My account</MenuItem> */}
         <MenuItem
           onClick={() => {
             localStorage.removeItem("userInfo");

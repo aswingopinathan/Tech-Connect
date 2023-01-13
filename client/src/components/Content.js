@@ -37,7 +37,6 @@ function Content() {
         <Box sx={{ display: { xs: "none", sm: "none",md: "block" } }}>
         <img style={homeImage} src={logo} alt=""></img>
         </Box>
-{/* <lottie-player src="https://assets5.lottiefiles.com/packages/lf20_osdxlbqq.json"  background="transparent"  speed="1"  style="width: 300px; height: 300px;"  loop controls autoplay></lottie-player> */}
       </div>
 
     </div>

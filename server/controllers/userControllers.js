@@ -285,7 +285,6 @@ module.exports = {
       const { postId } = req.body;
       Post.remove({ _id: postId }).then((data) => {
         console.log("removePost working");
-        // console.log(data);
         res.status(200).json(data);
       });
     } catch (error) {
@@ -295,7 +294,6 @@ module.exports = {
   }),
 
   reportPost: asyncHandler(async (req, res) => {
-    // console.log("reportPost working");
     try {
       const { postId, userId } = req.body;
       Post.updateOne({ _id: postId }, { $push: { report: userId } }).then(
@@ -377,7 +375,6 @@ module.exports = {
       User.find({ _id: userId }).then((data) => {
         console.log("getUser working");
         [data] = data;
-        // console.log(data);
         res.status(200).json(data);
       });
     } catch (error) {
@@ -408,7 +405,6 @@ module.exports = {
         console.log("connectUser1 working");
         console.log(data);
         next();
-        // res.status(200).json(data);
       });
     } catch (error) {
       console.log(error);
@@ -443,7 +439,6 @@ module.exports = {
         console.log("disConnectUser1 working");
         console.log(data);
         next();
-        // res.status(200).json(data);
       });
     } catch (error) {
       console.log(error);
@@ -562,13 +557,13 @@ module.exports = {
 
   searchUser: asyncHandler(async (req, res) => {
     try {
-      // const userId = req.query.userId;
       const queryinput = req.params.queryinput;
-      // console.log("backend queryinput",queryinput);
+      const userId = req.params.userId;
+console.log('userId',userId);
 
-      User.find({ name: { $regex: queryinput, $options: "i" } }).then(
+      User.find({ name: { $regex: new RegExp("^" + queryinput + ".*", "i") },
+      _id: { $ne: userId }}).then(
         (data) => {
-          // console.log("searchUser working");
           console.log(data);
           res.status(200).json(data);
         }
@@ -632,7 +627,6 @@ module.exports = {
       Notification.deleteOne({ userid:userId }).then(
         (data) => {
           console.log("data",data);
-          // console.log('data[0]',data[0]);
           res.status(200).json(data);
         }
       );
@@ -750,7 +744,6 @@ module.exports = {
     console.log("clearEdu working");
     try {
       const { userId,eduValue } = req.body;
-      // console.log("expId", expId);
       User.updateOne(
         { _id: userId },
         { $pull: { education: { $eq: eduValue } } }
@@ -769,7 +762,6 @@ module.exports = {
     console.log("clearSkill working");
     try {
       const { userId,skillValue } = req.body;
-      // console.log("expId", expId);
       User.updateOne(
         { _id: userId },
         { $pull: { skills: { $eq: skillValue } } }
@@ -788,6 +780,26 @@ module.exports = {
     let userId = req.params.id;
     try {
       User.find({ _id: userId }).then((data) => {
+        res.status(200).json(data);
+      });
+    } catch (error) {
+      console.log(error);
+      res.status(500).json(error);
+    }
+  }),
+
+  editPost: asyncHandler(async (req, res) => {
+    try {
+      const { postId, editpost } = req.body;
+      Post.updateOne(
+        { _id: postId },
+        {
+          $set: {
+            description: editpost,
+          },
+        }
+      ).then((data) => {
+        console.log("editPost successfull");
         res.status(200).json(data);
       });
     } catch (error) {

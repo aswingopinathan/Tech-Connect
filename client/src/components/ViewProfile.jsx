@@ -7,15 +7,12 @@ import {
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
 import { findChat } from "../api/ChatRequest";
-// import { findChat } from "../../../server/controllers/ChatController";
 
 
 function ViewProfile({ userdata, mode, setMode, setConnectUpdate }) {
   const navigate = useNavigate();
 
   let userId = JSON.parse(localStorage.getItem("userInfo"))?._id;
-// console.log('userId',userId);
-// console.log('userdata.connectionIds',userdata.connectionIds);
 let token = JSON.parse(localStorage.getItem("userInfo"))?.token;
 const config = {
   headers: {
@@ -263,8 +260,7 @@ const chatRemover = async (id) => {
             <h3>Education</h3>
             <ul>
               <li>{userdata?.education}</li>
-              {/* <li>PG Diploma in Industrial Automation</li> */}
-              {/* <li>CCNA</li> */}
+             
             </ul>
           </div>
          
@@ -291,8 +287,7 @@ const chatRemover = async (id) => {
             <h3>Skills</h3>
             <ul>
               <li>{userdata?.skills}</li>
-              {/* <li>MERN stack developer trainee</li> */}
-              {/* <li>MERN stack developer trainee</li> */}
+              
             </ul>
           </div>
           

@@ -203,7 +203,6 @@ export default function SignUp() {
           }}
         >
           {error && <ErrorMessage varient="danger">{error}</ErrorMessage>}
-          {/* {message && <ErrorMessage varient="danger">{message}</ErrorMessage>} */}
           {loading && <Loading />}
 
           <Avatar sx={{ m: 1, bgcolor: "secondary.main" }}>
@@ -234,16 +233,7 @@ export default function SignUp() {
                 />
                 <span style={{ color: "red" }}>{errName}</span>
               </Grid>
-              {/* <Grid item xs={12} sm={6}>
-                <TextField
-                  required
-                  fullWidth
-                  id="lastName"
-                  label="Last Name"
-                  name="lastName"
-                  autoComplete="family-name"
-                />
-              </Grid> */}
+             
               <Grid item xs={12}>
                 <TextField
                   required
@@ -305,17 +295,7 @@ export default function SignUp() {
                 />
                 <span style={{ color: "red" }}>{errMob}</span>
               </Grid>
-              {/* <Grid item xs={12}>
-                <TextField
-                  // required
-                  fullWidth
-                  name="pic"
-                  label="Upload pic"
-                  type="image/png"
-                  id="pic"
-                  autoComplete="pic"
-                />
-              </Grid> */}
+             
               {picMessage && (
                 <ErrorMessage varient="danger">{picMessage}</ErrorMessage>
               )}

@@ -35,7 +35,14 @@ io.on("connection", (socket) => {
   });
 
   // like notification
-
+  socket.on("send-notifications", (data) => {
+    let { postOwnerId, ...notification } = data;
+    const receiver = activeUsers.find((user) => user.userId === postOwnerId);
+    if (receiver) {
+      io.to(receiver.socketId).emit("receive-notification", notification);
+      console.log("notification", notification);
+    }
+  });
   // comment notification
 
   socket.on("disconnect", () => {

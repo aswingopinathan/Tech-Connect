@@ -1,4 +1,3 @@
-// import * as React from "react";
 import Avatar from "@mui/material/Avatar";
 import Button from "@mui/material/Button";
 import CssBaseline from "@mui/material/CssBaseline";
@@ -96,8 +95,6 @@ export default function SignIn() {
         );
 
         console.log(data);
-        // console.log('email',data.email);
-        // console.log('error',data.error);
 
         if(data.email){
           localStorage.setItem("userInfo", JSON.stringify(data));
@@ -134,7 +131,6 @@ export default function SignIn() {
         >
           {error && <ErrorMessage varient="danger">{error}</ErrorMessage>}
           {loading && <Loading />}
-          {/* {hello?<p>{hello}</p>:""} */}
 
           <Avatar sx={{ m: 1, bgcolor: "secondary.main" }}>
             <LockOutlinedIcon />
@@ -189,7 +185,6 @@ export default function SignIn() {
             <Grid container>
               <Grid item xs>
                 <Link href="#" variant="body2">
-                  {/* Forgot password? */}
                 </Link>
               </Grid>
               <Grid item>

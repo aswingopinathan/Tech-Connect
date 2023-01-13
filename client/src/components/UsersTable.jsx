@@ -62,8 +62,6 @@ useEffect(()=>{
 },[blockUpdate])
 
     const blockUser = (id,value)=>{
-        // console.log('id',id);
-        // console.log('value',value);
         axios.post('/admin/blockuser',{
             userId:id,
             block:value,
@@ -73,8 +71,10 @@ useEffect(()=>{
     }
 
   return (
-    <div style={{marginTop:'60px',marginLeft:'250px',marginRight:'10px',backgroundColor:'yellow'}}>
-      <div>UsersTable</div>
+    <div style={{marginTop:'60px',marginLeft:'250px',marginRight:'10px'}}>
+      <div style={{display:'flex',justifyContent:'center'}}>
+        <h2>User Details</h2>
+        </div>
       <TableContainer component={Paper}>
       <Table sx={{ minWidth: 700 }} aria-label="customized table">
         <TableHead>
@@ -84,7 +84,6 @@ useEffect(()=>{
             <StyledTableCell>EMAIL</StyledTableCell>
             <StyledTableCell>MOBILE</StyledTableCell>
             <StyledTableCell>STATUS</StyledTableCell>
-            {/* <StyledTableCell align="right">REPORTS</StyledTableCell> */}
           </TableRow>
         </TableHead>
         <TableBody>
@@ -104,7 +103,6 @@ useEffect(()=>{
                 variant='contained'
                 color='error'
                 onClick={()=>{
-                    // console.log('block now');
                     blockUser(allUser._id,false)
                 }}
                 >blocked</Button>):(<Button

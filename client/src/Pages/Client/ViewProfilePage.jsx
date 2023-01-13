@@ -20,12 +20,8 @@ const location = useLocation()
   });
 
   let token = JSON.parse(localStorage.getItem("userInfo"))?.token;
-//   let userId = JSON.parse(localStorage.getItem("userInfo"))?._id;
-
-//   const [userupdate, setUserUpdate] = useState(false);
   const [userdata, setUserData] = useState("");
   const [connectUpdate,setConnectUpdate] = useState(false)
-//   console.log("userId", userId);
 
   useEffect(() => {
     const config = {

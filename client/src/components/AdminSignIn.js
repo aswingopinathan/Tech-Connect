@@ -54,12 +54,6 @@ export default function SignIn() {
       return true;
     }
   };
-  // useEffect(()=>{
-  //   const userInfo =localStorage.getItem("adminInfo");
-  //   if(userInfo){
-  //     navigate('/admin/home')
-  //   }
-  // })
 
   const handlePass = () => {
     if (password === "" || password === "  ") {
@@ -100,8 +94,6 @@ export default function SignIn() {
         config
       );
 
-      console.log(data);
-      // localStorage.setItem("userInfo", JSON.stringify(data));
       localStorage.setItem("adminInfo", JSON.stringify(data));
 
       setLoading(false);
@@ -185,9 +177,7 @@ export default function SignIn() {
             </Button>
             <Grid container>
               <Grid item xs>
-                {/* <Link href="#" variant="body2">
-                  Forgot password?
-                </Link> */}
+               
               </Grid>
               <Grid item>
                 <Link href="/signup" variant="body2">

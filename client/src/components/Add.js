@@ -11,15 +11,12 @@ import { Add as AddIcon } from "@mui/icons-material";
 import Box from "@mui/material/Box";
 import Modal from "@mui/material/Modal";
 import { useState } from "react";
-
 import { Stack } from "@mui/system";
 import ImageIcon from "@mui/icons-material/Image";
 import VideoCameraBackIcon from "@mui/icons-material/VideoCameraBack";
-// import PersonAddIcon from "@mui/icons-material/PersonAdd";
 import Button from "@mui/material/Button";
 import ButtonGroup from "@mui/material/ButtonGroup";
 import axios from "axios";
-// import { useNavigate } from "react-router-dom";
 import Collapse from "@mui/material/Collapse";
 import Paper from "@mui/material/Paper";
 import { UserContext } from "../context/Context";
@@ -53,7 +50,6 @@ function Add() {
   const [error, setError] = useState(false);
   const [loading, setLoading] = useState(false);
 
-  // const [progress, setProgress] = useState();
 
   const imageUpload = (pics) => {
     if (!pics) {
@@ -76,7 +72,6 @@ function Add() {
         .then((res) => res.json())
         .then((data) => {
           console.log(data);
-          // setImgUpload(true)
     setLoading(false)
 
           setPic(data.url.toString());
@@ -109,7 +104,6 @@ function Add() {
         .then((res) => res.json())
         .then((data) => {
           console.log(data);
-          // setImgUpload(true)
     setLoading(false)
 
           setVideo(data.url.toString());
@@ -156,7 +150,6 @@ function Add() {
         setLoading(false);
         setError("");
 
-        // navigate("/user");
         setTrigger(Math.random());
         setPic(null);
         setVideo(null);
@@ -242,7 +235,6 @@ function Add() {
           <div style={{display:'flex',justifyContent:'center'}}>
             <div>
           {loading && <Loading />}
-          {/* {loading &&  <progress id="progressBar" value="0" max="100" style="width:300px;"></progress>} */}
             </div>
           </div>
 

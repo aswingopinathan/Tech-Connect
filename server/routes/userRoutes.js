@@ -8,7 +8,7 @@ const { registerUser, authUser,searchUser,
          addSkills,notifyLike,disConnectUser1,disConnectUser2,
           findNotifications,clearNotification,notifyUnlike,
           notifyComment,notifyUncomment,getUniquePost,clearExp,
-          clearEdu,clearSkill,getConnections} = require("../controllers/userControllers");
+          clearEdu,clearSkill,getConnections,editPost} = require("../controllers/userControllers");
 const { verifyToken } = require("../middlewares/tokenMiddleware")
 const router=express.Router();
 
@@ -48,7 +48,6 @@ router.post('/connectuser',verifyToken,connectUser1,connectUser2)
 
 router.post('/disconnectuser',verifyToken,disConnectUser1,disConnectUser2)
 
-
 router.post('/picupdate',verifyToken,picUpdate)
 
 router.post('/editabout',verifyToken,editAbout)
@@ -59,7 +58,7 @@ router.post('/addeducation',verifyToken,addEducation)
 
 router.post('/addskills',verifyToken,addSkills)
 
-router.get('/search/:queryinput',verifyToken,searchUser)
+router.get('/search/:queryinput/:userId',verifyToken,searchUser)
 
 router.post('/notifylike',verifyToken,notifyLike)
 
@@ -76,13 +75,14 @@ router.post('/notifyuncomment',verifyToken,notifyUncomment)
 router.get('/getpost/:postId',verifyToken,getUniquePost)
 
 router.post('/clearexp',verifyToken,clearExp)
+
 router.post('/clearedu',verifyToken,clearEdu)
+
 router.post('/clearskill',verifyToken,clearSkill)
 
 router.get('/getconnections/:id',verifyToken,getConnections)
 
-
-
+router.post('/editpost',verifyToken,editPost)
 
 module.exports=router; 
   
