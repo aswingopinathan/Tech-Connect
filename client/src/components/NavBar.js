@@ -47,6 +47,9 @@ const Icons = styled(Box)(({ theme }) => ({
 }));
 
 function NavBar({ mode, setMode }) {
+  const axioInstance = axios.create({
+    baseURL: process.env.REACT_APP_API_URL,
+  });
   // 
   const [notifications,setNotifications] = useState([])
   const notifCount = useRef(0)
@@ -107,7 +110,7 @@ function NavBar({ mode, setMode }) {
     console.log("queryinput", queryinput);
     try {
       if(queryinput){
-        let { data } = await axios.get(`/search/${queryinput}/${userId}`, config);
+        let { data } = await axioInstance.get(`/search/${queryinput}/${userId}`, config);
         if(data.length === 0){
           console.log('c1 working');
       setDataReceived('No user found');
@@ -155,7 +158,7 @@ function NavBar({ mode, setMode }) {
   }, [updateNotify]);
 
   const clearNotification = async()=>{
-    await axios.post('/clearnotify',{
+    await axioInstance.post('/clearnotify',{
       userId: userId,
     },config).then(()=>{
       setUpdateNotify(!updateNotify)

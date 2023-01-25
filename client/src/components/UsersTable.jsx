@@ -37,6 +37,9 @@ const StyledTableRow = styled(TableRow)(({ theme }) => ({
 
 
 function UsersTable() {
+  const axioInstance = axios.create({
+    baseURL: process.env.REACT_APP_API_URL,
+  });
 
 const [allUsers,setAllUsers] = useState([])
 const [blockUpdate,setBlockUpdate] = useState(false)
@@ -53,7 +56,7 @@ const config = {
 
 useEffect(()=>{
     const getUserData = async () => {
-        const { data } = await axios.get('/admin/users',config)
+        const { data } = await axioInstance.get('/admin/users',config)
     console.log('data',data);
     setAllUsers(data)
     }
@@ -62,7 +65,7 @@ useEffect(()=>{
 },[blockUpdate])
 
     const blockUser = (id,value)=>{
-        axios.post('/admin/blockuser',{
+        axioInstance.post('/admin/blockuser',{
             userId:id,
             block:value,
         },config).then(()=>{

@@ -7,6 +7,9 @@ import { UserContext } from '../context/Context';
 
 
 function Feed() {
+  const axioInstance = axios.create({
+    baseURL: process.env.REACT_APP_API_URL,
+  });
   const{trigger}=useContext(UserContext)
   const [posts,setPosts] = useState([]);
 const [liked,setLiked] = useState(false);
@@ -22,11 +25,11 @@ const [liked,setLiked] = useState(false);
       },
     };
     if(uniquePost){
-      axios.get(`/getpost/${uniquePost}`,config).then((data)=>{
+      axioInstance.get(`/getpost/${uniquePost}`,config).then((data)=>{
         setPosts(data.data)
       })
     }else{
-      axios.get('/getpost',config).then((data)=>{
+      axioInstance.get('/getpost',config).then((data)=>{
         setPosts(data.data)
       })
     }

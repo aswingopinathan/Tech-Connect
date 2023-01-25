@@ -14,6 +14,9 @@ import { UserContext } from "../context/Context";
 import { findChat } from "../api/ChatRequest";
 
 function RightBar() {
+  const axioInstance = axios.create({
+    baseURL: process.env.REACT_APP_API_URL,
+  });
   const { setChatLoader } = useContext(UserContext)
   const navigate = useNavigate();
 
@@ -46,7 +49,7 @@ function RightBar() {
   };
 
   const connectUser = async (id) => {
-    await axios
+    await axioInstance
       .post(
         "/connectuser",
         {
@@ -61,7 +64,7 @@ function RightBar() {
   };
 
   const chatCreator = async (id) => {
-    await axios.post(
+    await axioInstance.post(
       "/chat",
       {
         senderId: userId,

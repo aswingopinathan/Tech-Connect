@@ -4,7 +4,6 @@ import AccountCircleIcon from '@mui/icons-material/AccountCircle';
 import Switch from '@mui/material/Switch';
 import DarkModeIcon from '@mui/icons-material/DarkMode';
 import {Link, useNavigate} from 'react-router-dom'
-import PeopleIcon from '@mui/icons-material/People';
 
 import Typography from '@mui/material/Typography';
 import Modal from '@mui/material/Modal';

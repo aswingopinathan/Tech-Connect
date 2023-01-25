@@ -10,6 +10,9 @@ import { findChat } from "../api/ChatRequest";
 
 
 function ViewProfile({ userdata, mode, setMode, setConnectUpdate }) {
+  const axioInstance = axios.create({
+    baseURL: process.env.REACT_APP_API_URL,
+  });
   const navigate = useNavigate();
 
   let userId = JSON.parse(localStorage.getItem("userInfo"))?._id;
@@ -22,7 +25,7 @@ const config = {
 };
 
 const connectUser = async (id) => {
-  await axios
+  await axioInstance
     .post(
       "/connectuser",
       {
@@ -37,7 +40,7 @@ const connectUser = async (id) => {
 };
 
 const disConnectUser = async (id) => {
-  await axios
+  await axioInstance
     .post(
       "/disconnectuser",
       {
@@ -52,7 +55,7 @@ const disConnectUser = async (id) => {
 };
 
 const chatCreator = async (id) => {
-  await axios.post(
+  await axioInstance.post(
     "/chat",
     {
       senderId: userId,
@@ -63,7 +66,7 @@ const chatCreator = async (id) => {
 };
 
 const chatRemover = async (id) => {
-  await axios.post(
+  await axioInstance.post(
     "/chat/removechat",
     {
       senderId: userId,

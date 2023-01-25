@@ -19,6 +19,9 @@ import DeleteIcon from '@mui/icons-material/Delete';
 import ClearIcon from '@mui/icons-material/Clear';
 
 function Profile({ userdata, setUserUpdate, mode, setMode }) {
+  const axioInstance = axios.create({
+    baseURL: process.env.REACT_APP_API_URL,
+  });
   
   const{setUpdateNav}=useContext(UserContext)
 
@@ -72,7 +75,7 @@ function Profile({ userdata, setUserUpdate, mode, setMode }) {
 
   const handleProfile = async () => {
     console.log("editprofile working");
-    await axios
+    await axioInstance
       .post(
         "/editprofile",
         {
@@ -93,7 +96,7 @@ function Profile({ userdata, setUserUpdate, mode, setMode }) {
 
   const handleAbout = async () => {
     console.log("handleAbout working");
-    await axios
+    await axioInstance
       .post(
         "/editabout",
         {
@@ -111,7 +114,7 @@ function Profile({ userdata, setUserUpdate, mode, setMode }) {
 
   const handleExperience = async () => {
     console.log("handleExperience working");
-    await axios
+    await axioInstance
       .post(
         "/addexperience",
         {
@@ -129,7 +132,7 @@ function Profile({ userdata, setUserUpdate, mode, setMode }) {
 
   const handleEducation = async () => {
     console.log("handleEducation working");
-    await axios
+    await axioInstance
       .post(
         "/addeducation",
         {
@@ -147,7 +150,7 @@ function Profile({ userdata, setUserUpdate, mode, setMode }) {
 
   const handleSkills = async () => {
     console.log("handleSkills working");
-    await axios
+    await axioInstance
       .post(
         "/addskills",
         {
@@ -207,7 +210,7 @@ function Profile({ userdata, setUserUpdate, mode, setMode }) {
     if (pic) {
       try {
         setLoading(true);
-        const { data } = await axios.post(
+        const { data } = await axioInstance.post(
           "/picupdate",
           {
             pic: pic,
@@ -232,7 +235,7 @@ function Profile({ userdata, setUserUpdate, mode, setMode }) {
 
 //
 const clearExp = (exp)=>{
-  axios.post('/clearexp',{
+  axioInstance.post('/clearexp',{
     userId:userId,
     expValue:exp,
   },config).then(()=>{
@@ -242,7 +245,7 @@ const clearExp = (exp)=>{
 }
 
 const clearEdu = (edu)=>{
-  axios.post('/clearedu',{
+  axioInstance.post('/clearedu',{
     userId:userId,
     eduValue:edu,
   },config).then(()=>{
@@ -252,7 +255,7 @@ const clearEdu = (edu)=>{
 }
 
 const clearSkill = (skill)=>{
-  axios.post('/clearskill',{
+  axioInstance.post('/clearskill',{
     userId:userId,
     skillValue:skill,
   },config).then(()=>{

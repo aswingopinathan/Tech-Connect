@@ -5,7 +5,6 @@ import "./ChatBox.css";
 import { format } from "timeago.js";
 import InputEmoji from "react-input-emoji";
 import { Button } from "@mui/material";
-import axios from "axios";
 
 function ChatBox({
   chat,

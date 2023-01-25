@@ -11,6 +11,9 @@ import { useLocation } from "react-router-dom";
 import ViewProfile from "../../components/ViewProfile";
 
 function ViewProfilePage() {
+  const axioInstance = axios.create({
+    baseURL: process.env.REACT_APP_API_URL,
+  });
 const location = useLocation()
   const [mode, setMode] = useState("light");
   const darkTheme = createTheme({
@@ -31,7 +34,7 @@ const location = useLocation()
       },
     };
 
-    axios
+    axioInstance
       .get(
         `/finduser?userId=${location.state.userId}`,
         config

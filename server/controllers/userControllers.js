@@ -788,23 +788,24 @@ console.log('userId',userId);
     }
   }),
 
-  editPost: asyncHandler(async (req, res) => {
+  editPost: async (req, res) => {
     try {
       const { postId, editpost } = req.body;
-      Post.updateOne(
+     const response = await Post.updateOne(
         { _id: postId },
         {
           $set: {
             description: editpost,
           },
         }
-      ).then((data) => {
-        console.log("editPost successfull");
-        res.status(200).json(data);
-      });
+      )
+      // console.log('response',response);
+      if(!response.acknowledged)throw 'Something went wrong!'
+      console.log("editPost successfull");
+        res.status(200).json(response);
     } catch (error) {
       console.log(error);
       res.status(500).json(error);
     }
-  }),
+  },
 };

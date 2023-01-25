@@ -38,6 +38,9 @@ const theme = createTheme();
 
 export default function SignUp() {
 
+  const axioInstance = axios.create({
+    baseURL: process.env.REACT_APP_API_URL,
+  });
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [mobile, setMobile] = useState("");
@@ -125,7 +128,7 @@ export default function SignUp() {
           };
 
           setLoading(true);
-          const { data } = await axios.post(
+          const { data } = await axioInstance.post(
             "/signup",
             { name: name, email: email, password: password,mobile: mobile, pic: pic },
             config

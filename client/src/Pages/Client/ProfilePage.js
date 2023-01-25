@@ -9,6 +9,9 @@ import { Box } from "@mui/system";
 
 function ProfilePage() {
 
+  const axioInstance = axios.create({
+    baseURL: process.env.REACT_APP_API_URL,
+  });
   const [mode, setMode] = useState("light");
   const darkTheme = createTheme({
     palette: {
@@ -31,7 +34,7 @@ function ProfilePage() {
       },
     };
 
-    axios
+    axioInstance
       .get(
         `/finduser?userId=${userId}`,
         config

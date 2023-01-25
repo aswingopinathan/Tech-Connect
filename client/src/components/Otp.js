@@ -17,6 +17,9 @@ import { useNavigate } from "react-router-dom";
 import SendToMobileIcon from "@mui/icons-material/SendToMobile";
 
 function Otp() {
+  const axioInstance = axios.create({
+    baseURL: process.env.REACT_APP_API_URL,
+  });
   //////////////
 const [counter,setCounter]=useState(60);
 useEffect(()=>{
@@ -59,7 +62,7 @@ useEffect(()=>{
         const userData = JSON.parse(localStorage.getItem("initialInfo"));
         localStorage.removeItem("initialInfo");
 
-        const { data } = await axios.post(
+        const { data } = await axioInstance.post(
           "/verifyotp",
           {
             otp: otp,
@@ -95,7 +98,7 @@ useEffect(()=>{
         "Content-Type": "application/json",
       },
     };
-    await axios.post(
+    await axioInstance.post(
       "/resendotp",
       {
         email: userData.email,

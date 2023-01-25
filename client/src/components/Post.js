@@ -20,7 +20,7 @@ import Favorite from "@mui/icons-material/Favorite";
 import FavoriteBorder from "@mui/icons-material/FavoriteBorder";
 import CommentIcon from "@mui/icons-material/Comment";
 import axios from "axios";
-import { useState,useContext } from "react";
+import { useState } from "react";
 import Collapse from "@mui/material/Collapse";
 import { format } from "timeago.js";
 import { getUser } from "../api/UserRequest";
@@ -44,11 +44,14 @@ const style = {
 };
 // 
 function Post({ post, setLiked }) {
+  const axioInstance = axios.create({
+    baseURL: process.env.REACT_APP_API_URL,
+  });
   // 
   const socket = useRef()
 // 
   // 
-  const [editpost,setEditPost] = useState('')
+  const [editpost,setEditPost] = useState("")
   const [openpost, setOpenPost] = React.useState(false);
   const [postId,setPostId] = useState('')
   const handleOpenPost = (postId) => {
@@ -98,7 +101,7 @@ function Post({ post, setLiked }) {
 
   // axios requests start
   const like = async () => {
-    await axios
+    await axioInstance
       .post(
         "/like",
         {
@@ -114,7 +117,7 @@ function Post({ post, setLiked }) {
   };
 
   const unlike = async () => {
-    await axios
+    await axioInstance
       .post(
         "/unlike",
         {
@@ -131,7 +134,7 @@ function Post({ post, setLiked }) {
   const addComment = async () => {
     console.log("addComment working");
     console.log(comment);
-    await axios
+    await axioInstance
       .post(
         "/addcomment",
         {
@@ -150,7 +153,7 @@ function Post({ post, setLiked }) {
   };
 
   const removepost = async () => {
-    await axios
+    await axioInstance
       .post(
         "/removepost",
         {
@@ -166,7 +169,7 @@ function Post({ post, setLiked }) {
   };
 
   const reportpost = async () => {
-    await axios
+    await axioInstance
       .post(
         "/reportpost",
         {
@@ -186,7 +189,7 @@ function Post({ post, setLiked }) {
     console.log('postId',postId);
     console.log('commentId',postCommentId);
  
-    await axios
+    await axioInstance
       .post(
         "/removecomment",
         {
@@ -204,7 +207,7 @@ function Post({ post, setLiked }) {
 
   const connectUser = async (id) => {
    
-    await axios
+    await axioInstance
       .post(
         "/connectuser",
         {
@@ -221,7 +224,7 @@ function Post({ post, setLiked }) {
 
   
   const chatCreator = async (id) => {
-    await axios
+    await axioInstance
     .post(
       "/chat",
       {
@@ -233,7 +236,7 @@ function Post({ post, setLiked }) {
     };
 
     const likeNotify = async (likedUserId,postId,postUserId,likedUsername) => {
-      await axios
+      await axioInstance
       .post(
         "/notifylike",
         {
@@ -258,7 +261,7 @@ function Post({ post, setLiked }) {
 
       const unlikeNotify = async (likedUserId,postId,postUserId) => {
         console.log("unlikeNotify working");
-        await axios
+        await axioInstance
         .post(
           "/notifyunlike",
           {
@@ -271,7 +274,7 @@ function Post({ post, setLiked }) {
         };
 
         const commentNotify = async (commentedUserId,postId,postUserId,commentedUsername) => {
-          await axios
+          await axioInstance
           .post(
             "/notifycomment",
             {
@@ -285,7 +288,7 @@ function Post({ post, setLiked }) {
           };
 
           const uncommentNotify = async (commentedUserId,postUserId,postId) => {
-            await axios
+            await axioInstance
             .post(
               "/notifyuncomment",
               {
@@ -297,12 +300,12 @@ function Post({ post, setLiked }) {
             )
             };
 
-     // axios requests end
+     // axioInstance requests end
 
 // 
 const handlePost = async () => {
   console.log("handlePost working");
-  await axios
+  await axioInstance
     .post(
       "/editpost",
       {
@@ -315,7 +318,8 @@ const handlePost = async () => {
       console.log('editPost successfull');
       setOpenPost(false);
       setLiked(Math.random());
-    });
+    }).catch(()=>navigate('/page404'))
+    // .catch(()=>navigate('/error'))
 };
 // 
   return (
@@ -353,6 +357,8 @@ const handlePost = async () => {
                 label="Description"
                 variant="standard"
                 value={editpost}
+                // value={post?.description}
+
   // about=userdata.about
                 multiline
                 fullWidth

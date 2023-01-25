@@ -36,6 +36,9 @@ const UserBox = styled(Box)({
 });
 function Add() {
   //
+  const axioInstance = axios.create({
+    baseURL: process.env.REACT_APP_API_URL,
+  });
   const { setTrigger } = useContext(UserContext);
 
   const [open, setOpen] = useState(false);
@@ -64,7 +67,7 @@ function Add() {
       
       data.append("file", pics);
       data.append("upload_preset", "techconnect");
-      data.append("cloud_name", process.env.CLOUD_NAME);
+      data.append("cloud_name", "dtsqr3v76");
       fetch(`https://api.cloudinary.com/v1_1/dtsqr3v76/image/upload`, {
         method: "post",
         body: data,
@@ -133,7 +136,7 @@ function Add() {
         let name = JSON.parse(localStorage.getItem("userInfo"))?.name;
         let userId = JSON.parse(localStorage.getItem("userInfo"))?._id;
 
-        const { data } = await axios.post(
+        const { data } = await axioInstance.post(
           "/addpost",
           {
             description: description,

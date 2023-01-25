@@ -24,4 +24,5 @@ export default function TriggerContext({ children }) {
       {children}
     </UserContext.Provider>
   );
+  
 }

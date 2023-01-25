@@ -36,6 +36,9 @@ function Copyright(props) {
 const theme = createTheme();
 
 export default function SignIn() {
+  const axioInstance = axios.create({
+    baseURL: process.env.REACT_APP_API_URL,
+  });
   const navigate = useNavigate();
 
   const [email, setEmail] = useState("");
@@ -85,7 +88,7 @@ export default function SignIn() {
         };
 
         setLoading(true);
-        const { data } = await axios.post(
+        const { data } = await axioInstance.post(
           "/signin",
           {
             email: email,
